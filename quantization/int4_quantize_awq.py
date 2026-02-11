@@ -202,15 +202,15 @@ def quantize_and_upload(
     if mtype == "vl":
         from transformers import Qwen3VLForConditionalGeneration
         model = Qwen3VLForConditionalGeneration.from_pretrained(
-            model_id, torch_dtype="auto", trust_remote_code=True,
+            model_id, torch_dtype="auto", device_map="auto", trust_remote_code=True,
         )
     elif mtype == "encoder":
         model = AutoModel.from_pretrained(
-            model_id, torch_dtype="auto", trust_remote_code=True,
+            model_id, torch_dtype="auto", device_map="auto", trust_remote_code=True,
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(
-            model_id, torch_dtype="auto", trust_remote_code=True,
+            model_id, torch_dtype="auto", device_map="auto", trust_remote_code=True,
         )
 
     timing["model_load"] = time.time() - t0

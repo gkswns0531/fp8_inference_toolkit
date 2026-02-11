@@ -250,18 +250,21 @@ def quantize_and_upload(
         model = Qwen3VLForConditionalGeneration.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
     elif mtype == "encoder":
         model = AutoModel.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
 
