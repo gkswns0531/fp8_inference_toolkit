@@ -55,16 +55,25 @@ BASE_TEXTS = [
 
 
 def generate_test_texts(tokenizer, target_seq_len: int, num_texts: int) -> list[str]:
-    """주어진 토큰 길이에 맞는 테스트 텍스트를 생성합니다."""
+    """주어진 토큰 길이에 맞는 테스트 텍스트를 생성합니다. (품질 비교용 고정 텍스트)"""
     texts = []
     for i in range(num_texts):
         base = BASE_TEXTS[i % len(BASE_TEXTS)]
-        # 텍스트를 반복하여 target_seq_len에 가까운 길이로 만듦
         repeated = (base + " ") * (target_seq_len // 50 + 1)
         tokens = tokenizer.encode(repeated, add_special_tokens=False)
-        # target_seq_len - 2 (special tokens 여유)
         truncated_tokens = tokens[:target_seq_len - 2]
         text = tokenizer.decode(truncated_tokens, skip_special_tokens=True)
+        texts.append(text)
+    return texts
+
+
+def generate_random_texts(tokenizer, target_seq_len: int, num_texts: int) -> list[str]:
+    """랜덤 토큰 시퀀스로 텍스트를 생성합니다. (레이턴시 측정용, 캐시 방지)"""
+    vocab_size = tokenizer.vocab_size
+    texts = []
+    for _ in range(num_texts):
+        random_ids = np.random.randint(100, vocab_size, size=target_seq_len - 2)
+        text = tokenizer.decode(random_ids.tolist(), skip_special_tokens=True)
         texts.append(text)
     return texts
 
@@ -79,6 +88,7 @@ def run_latency_benchmark(
     test_texts: list[str],
     batch_sizes: list[int],
     max_model_len: int,
+    tokenizer,
     num_warmup: int = 3,
     num_runs: int = 10,
 ) -> dict:
@@ -110,19 +120,20 @@ def run_latency_benchmark(
     embeddings_16 = None
 
     for bs in batch_sizes:
-        batch_texts = test_texts[:bs]
         label = f"{bs}x1024"
 
-        # Warmup
+        # Warmup (랜덤 텍스트로 캐시 방지)
         for _ in range(num_warmup):
-            llm.embed(batch_texts)
+            warmup_texts = generate_random_texts(tokenizer, target_seq_len=1024, num_texts=bs)
+            llm.embed(warmup_texts)
 
-        # Timed runs
+        # Timed runs (매번 새로운 랜덤 토큰 시퀀스)
         times = []
         for _ in range(num_runs):
+            random_texts = generate_random_texts(tokenizer, target_seq_len=1024, num_texts=bs)
             torch.cuda.synchronize()
             t0 = time.time()
-            outputs = llm.embed(batch_texts)
+            outputs = llm.embed(random_texts)
             torch.cuda.synchronize()
             times.append(time.time() - t0)
 
@@ -140,10 +151,11 @@ def run_latency_benchmark(
         print(f"  {label}: avg={avg_ms:.2f}ms, std={std_ms:.2f}ms, "
               f"p50={p50_ms:.2f}ms, p99={p99_ms:.2f}ms")
 
-        # batch=16일 때 임베딩 저장 (품질 비교용)
+        # batch=max일 때 고정 텍스트로 임베딩 저장 (품질 비교용)
         if bs == max(batch_sizes):
+            quality_outputs = llm.embed(test_texts[:bs])
             embeddings_16 = np.array([
-                np.array(o.outputs.embedding) for o in outputs
+                np.array(o.outputs.embedding) for o in quality_outputs
             ])
 
     results["latencies"] = latencies
@@ -283,8 +295,6 @@ def main():
     actual_lens = [len(tokenizer.encode(t)) for t in test_texts]
     print(f"  Generated {len(test_texts)} texts, token lengths: "
           f"min={min(actual_lens)}, max={max(actual_lens)}, avg={np.mean(actual_lens):.0f}")
-    del tokenizer
-
     # 벤치마크 실행
     all_results = {}
     for name, path in variants.items():
@@ -295,6 +305,7 @@ def main():
                 test_texts=test_texts,
                 batch_sizes=batch_sizes,
                 max_model_len=args.max_model_len,
+                tokenizer=tokenizer,
                 num_warmup=args.num_warmup,
                 num_runs=args.num_runs,
             )
