@@ -1,0 +1,212 @@
+{
+  "model": "Qwen/Qwen3-Embedding-4B",
+  "token_length": 512,
+  "batch_sizes": [
+    1,
+    8
+  ],
+  "latency_runs": 5,
+  "vram": {
+    "BF16": 20779,
+    "FP8": 21159,
+    "W4A8-FP8-Marlin": 20415,
+    "W4A8-INT8-Marlin": 20415,
+    "Enhanced-PG(sym)": 20617
+  },
+  "latency": {
+    "BF16": {
+      "1": {
+        "avg_ms": 97.86,
+        "p50_ms": 98.58,
+        "p99_ms": 98.74
+      },
+      "8": {
+        "avg_ms": 678.36,
+        "p50_ms": 677.82,
+        "p99_ms": 681.84
+      }
+    },
+    "FP8": {
+      "1": {
+        "avg_ms": 73.36,
+        "p50_ms": 73.7,
+        "p99_ms": 74.01
+      },
+      "8": {
+        "avg_ms": 508.66,
+        "p50_ms": 507.32,
+        "p99_ms": 511.59
+      }
+    },
+    "W4A8-FP8-Marlin": {
+      "1": {
+        "avg_ms": 66.69,
+        "p50_ms": 66.45,
+        "p99_ms": 68.55
+      },
+      "8": {
+        "avg_ms": 510.92,
+        "p50_ms": 510.54,
+        "p99_ms": 512.37
+      }
+    },
+    "W4A8-INT8-Marlin": {
+      "1": {
+        "avg_ms": 61.25,
+        "p50_ms": 61.52,
+        "p99_ms": 62.3
+      },
+      "8": {
+        "avg_ms": 467.35,
+        "p50_ms": 467.16,
+        "p99_ms": 474.88
+      }
+    },
+    "Enhanced-PG(sym)": {
+      "1": {
+        "avg_ms": 87.44,
+        "p50_ms": 87.05,
+        "p99_ms": 89.31
+      },
+      "8": {
+        "avg_ms": 659.59,
+        "p50_ms": 657.14,
+        "p99_ms": 668.64
+      }
+    }
+  },
+  "accuracy": [
+    {
+      "label": "BF16 vs FP8 (real)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.99597863,
+      "cosine_sim_min": 0.99482304,
+      "cosine_sim_max": 0.99689491,
+      "mae": 0.00139695,
+      "max_diff": 0.00871111,
+      "p99_diff": 0.0047437
+    },
+    {
+      "label": "BF16 vs W4A8-FP8-Marlin (real)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.9398474,
+      "cosine_sim_min": 0.92354654,
+      "cosine_sim_max": 0.95070678,
+      "mae": 0.00539553,
+      "max_diff": 0.03525674,
+      "p99_diff": 0.01830988
+    },
+    {
+      "label": "BF16 vs W4A8-INT8-Marlin (real)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.92517408,
+      "cosine_sim_min": 0.91082197,
+      "cosine_sim_max": 0.93977496,
+      "mae": 0.00602175,
+      "max_diff": 0.03810079,
+      "p99_diff": 0.0202758
+    },
+    {
+      "label": "BF16 vs Enhanced-PG(sym) (real)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.86659826,
+      "cosine_sim_min": 0.8096227,
+      "cosine_sim_max": 0.91237114,
+      "mae": 0.00805567,
+      "max_diff": 0.0607349,
+      "p99_diff": 0.02720715
+    },
+    {
+      "label": "BF16 vs FP8 (random B=1)",
+      "n_samples": 1,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.99576505,
+      "cosine_sim_min": 0.99576505,
+      "cosine_sim_max": 0.99576505,
+      "mae": 0.001448,
+      "max_diff": 0.0079375,
+      "p99_diff": 0.00465026
+    },
+    {
+      "label": "BF16 vs W4A8-FP8-Marlin (random B=1)",
+      "n_samples": 1,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.93576881,
+      "cosine_sim_min": 0.93576881,
+      "cosine_sim_max": 0.93576881,
+      "mae": 0.00553168,
+      "max_diff": 0.04500483,
+      "p99_diff": 0.01877642
+    },
+    {
+      "label": "BF16 vs W4A8-INT8-Marlin (random B=1)",
+      "n_samples": 1,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.92326186,
+      "cosine_sim_min": 0.92326186,
+      "cosine_sim_max": 0.92326186,
+      "mae": 0.00605067,
+      "max_diff": 0.03863495,
+      "p99_diff": 0.02138325
+    },
+    {
+      "label": "BF16 vs Enhanced-PG(sym) (random B=1)",
+      "n_samples": 1,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.86527732,
+      "cosine_sim_min": 0.86527732,
+      "cosine_sim_max": 0.86527732,
+      "mae": 0.00805118,
+      "max_diff": 0.07442484,
+      "p99_diff": 0.02739013
+    },
+    {
+      "label": "BF16 vs FP8 (random B=8)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.99534961,
+      "cosine_sim_min": 0.99486615,
+      "cosine_sim_max": 0.99604382,
+      "mae": 0.0015117,
+      "max_diff": 0.00885815,
+      "p99_diff": 0.00500198
+    },
+    {
+      "label": "BF16 vs W4A8-FP8-Marlin (random B=8)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.92893718,
+      "cosine_sim_min": 0.91659088,
+      "cosine_sim_max": 0.93565072,
+      "mae": 0.00583807,
+      "max_diff": 0.0389714,
+      "p99_diff": 0.02021926
+    },
+    {
+      "label": "BF16 vs W4A8-INT8-Marlin (random B=8)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.91206138,
+      "cosine_sim_min": 0.88189936,
+      "cosine_sim_max": 0.92021208,
+      "mae": 0.00648113,
+      "max_diff": 0.04083557,
+      "p99_diff": 0.02303082
+    },
+    {
+      "label": "BF16 vs Enhanced-PG(sym) (random B=8)",
+      "n_samples": 8,
+      "embed_dim": 2560,
+      "cosine_sim_mean": 0.88266542,
+      "cosine_sim_min": 0.87004477,
+      "cosine_sim_max": 0.90310766,
+      "mae": 0.00754507,
+      "max_diff": 0.05486261,
+      "p99_diff": 0.02528504
+    }
+  ]
+}

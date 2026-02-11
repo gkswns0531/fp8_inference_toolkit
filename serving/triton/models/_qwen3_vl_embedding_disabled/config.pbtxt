@@ -1,0 +1,14 @@
+# Triton vLLM Backend Configuration
+#
+# IMPORTANT: backend: "vllm" (NOT "python")
+# vLLM backend은 decoupled model로 동작하므로 gRPC streaming 필수
+#
+# HTTP API는 501 에러를 반환하므로 반드시 gRPC를 사용해야 합니다.
+
+backend: "vllm"
+
+instance_group [
+    {
+        kind: KIND_MODEL
+    }
+]

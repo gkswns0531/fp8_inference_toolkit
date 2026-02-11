@@ -1,0 +1,8 @@
+{
+    "model": "Forturne/bge-m3-FP8",
+    "runner": "pooling",
+    "dtype": "auto",
+    "max_model_len": 4096,
+    "gpu_memory_utilization": 0.10,
+    "trust_remote_code": true
+}

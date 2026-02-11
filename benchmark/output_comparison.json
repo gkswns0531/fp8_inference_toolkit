@@ -1,0 +1,72 @@
+{
+  "sentences": [
+    "The quick brown fox jumps over the lazy dog.",
+    "Artificial intelligence is transforming the way we interact with technology.",
+    "CUDA tensor cores enable efficient matrix multiplication for deep learning workloads.",
+    "Climate change poses significant challenges to global food security and biodiversity.",
+    "The Pythagorean theorem states that a squared plus b squared equals c squared.",
+    "Quantum computing leverages superposition and entanglement to solve complex problems.",
+    "Natural language processing enables machines to understand human language.",
+    "The mitochondria is the powerhouse of the cell, producing ATP through oxidative phosphorylation."
+  ],
+  "metrics": {
+    "FP8": {
+      "cosine_sim_mean": 0.996028675550779,
+      "cosine_sim_min": 0.9939551519315275,
+      "cosine_sim_std": 0.0009554190601803226,
+      "max_abs_err": 0.009845484048128128,
+      "mean_abs_err": 0.0013784228899724083,
+      "rel_l2_mean": 0.08851411198704018,
+      "rel_l2_max": 0.10995316027600772,
+      "per_sentence_cosine": [
+        0.9939551519315275,
+        0.9961771449350663,
+        0.997248340216565,
+        0.995648132886911,
+        0.9960356131453161,
+        0.9965075910252474,
+        0.9970139928164177,
+        0.9956434374491813
+      ],
+      "per_sentence_rel_l2": [
+        0.10995316027600772,
+        0.08743975244727575,
+        0.07418436163201154,
+        0.09329380697073802,
+        0.08904365824751855,
+        0.08357522428199007,
+        0.07727881054285261,
+        0.09334412149792722
+      ]
+    },
+    "INT4-TC": {
+      "cosine_sim_mean": 0.13624081032542443,
+      "cosine_sim_min": 0.029083116307304042,
+      "cosine_sim_std": 0.10662186902338983,
+      "max_abs_err": 0.19066483713686466,
+      "mean_abs_err": 0.020379075908564647,
+      "rel_l2_mean": 1.3117261996301157,
+      "rel_l2_max": 1.3934969934207537,
+      "per_sentence_cosine": [
+        0.05110339456172299,
+        0.07114921405275373,
+        0.31038757609292006,
+        0.16087517729236092,
+        0.029083116307304042,
+        0.14129370282912665,
+        0.2964043543546711,
+        0.02962994711253588
+      ],
+      "per_sentence_rel_l2": [
+        1.3776042159724116,
+        1.362975241047214,
+        1.1744040380562326,
+        1.2954727537247201,
+        1.3934969934207537,
+        1.310500906248663,
+        1.1862509399325383,
+        1.3931045086383929
+      ]
+    }
+  }
+}

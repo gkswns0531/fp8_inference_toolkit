@@ -1,0 +1,100 @@
+{
+  "label": "vLLM Direct - Forturne/Qwen3-VL-Embedding-8B-FP8",
+  "timestamp": "2026-02-06 10:04:57",
+  "gpu_memory_mib": 18285,
+  "config": {
+    "batch_sizes": [
+      1
+    ],
+    "token_lengths": [
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048,
+      4096
+    ],
+    "runs": 3,
+    "overhead": 2
+  },
+  "results": [
+    {
+      "batch_size": 1,
+      "target_tokens": 64,
+      "actual_tokens": 64,
+      "truncated": false,
+      "avg_latency_ms": 43.574015299479164,
+      "p50_latency_ms": 43.87068748474121,
+      "p99_latency_ms": 44.11204814910889,
+      "throughput_tokens_per_sec": 1468.7652620520603,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 128,
+      "actual_tokens": 128,
+      "truncated": false,
+      "avg_latency_ms": 48.92961184183756,
+      "p50_latency_ms": 48.99477958679199,
+      "p99_latency_ms": 49.17141914367676,
+      "throughput_tokens_per_sec": 2616.0027676850036,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 256,
+      "actual_tokens": 256,
+      "truncated": false,
+      "avg_latency_ms": 60.695489247639976,
+      "p50_latency_ms": 60.84132194519043,
+      "p99_latency_ms": 61.242032051086426,
+      "throughput_tokens_per_sec": 4217.776364821939,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 512,
+      "actual_tokens": 512,
+      "truncated": false,
+      "avg_latency_ms": 104.19869422912598,
+      "p50_latency_ms": 105.41415214538574,
+      "p99_latency_ms": 106.99619770050049,
+      "throughput_tokens_per_sec": 4913.689214513055,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 1024,
+      "actual_tokens": 1024,
+      "truncated": false,
+      "avg_latency_ms": 186.83036168416342,
+      "p50_latency_ms": 186.0806941986084,
+      "p99_latency_ms": 188.72748374938965,
+      "throughput_tokens_per_sec": 5480.907871553935,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 2048,
+      "actual_tokens": 2048,
+      "truncated": false,
+      "avg_latency_ms": 385.55200894673663,
+      "p50_latency_ms": 383.0831050872803,
+      "p99_latency_ms": 391.87653064727783,
+      "throughput_tokens_per_sec": 5311.864424192192,
+      "success": true
+    },
+    {
+      "batch_size": 1,
+      "target_tokens": 4096,
+      "actual_tokens": 4096,
+      "truncated": false,
+      "avg_latency_ms": 808.7220191955566,
+      "p50_latency_ms": 807.7499866485596,
+      "p99_latency_ms": 812.2599029541016,
+      "throughput_tokens_per_sec": 5064.781102503342,
+      "success": true
+    }
+  ]
+}

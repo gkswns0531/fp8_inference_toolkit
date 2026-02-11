@@ -1,0 +1,34 @@
+[
+  {
+    "label": "PG+Asym",
+    "cosine_sim_mean": 0.910059,
+    "cosine_sim_min": 0.884156,
+    "mae": 0.006621,
+    "max_diff": 0.046115,
+    "latency_b1_ms": 25.7
+  },
+  {
+    "label": "PG+Clip0.95",
+    "cosine_sim_mean": 0.873994,
+    "cosine_sim_min": 0.835305,
+    "mae": 0.007816,
+    "max_diff": 0.065111,
+    "latency_b1_ms": 25.4
+  },
+  {
+    "label": "PG+Asym+Clip0.95",
+    "cosine_sim_mean": 0.897946,
+    "cosine_sim_min": 0.869474,
+    "mae": 0.00703,
+    "max_diff": 0.045332,
+    "latency_b1_ms": 26.1
+  },
+  {
+    "label": "PG+Clip0.90",
+    "cosine_sim_mean": 0.865269,
+    "cosine_sim_min": 0.826881,
+    "mae": 0.008044,
+    "max_diff": 0.067822,
+    "latency_b1_ms": 26.7
+  }
+]

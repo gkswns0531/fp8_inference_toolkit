@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-02-06 08:11:48",
+  "config": {
+    "batch_sizes": [
+      1,
+      16
+    ],
+    "token_length": 1024,
+    "runs": 5,
+    "warmup_runs": 2
+  },
+  "results": [
+    {
+      "model": "Qwen3-Embedding-0.6B-FP8",
+      "batch_size": 1,
+      "token_length": 1024,
+      "success": false
+    },
+    {
+      "model": "Qwen3-Embedding-0.6B-FP8",
+      "batch_size": 16,
+      "token_length": 1024,
+      "success": false
+    },
+    {
+      "model": "bge-m3-FP8",
+      "batch_size": 1,
+      "token_length": 1024,
+      "success": false
+    },
+    {
+      "model": "bge-m3-FP8",
+      "batch_size": 16,
+      "token_length": 1024,
+      "success": false
+    },
+    {
+      "model": "Qwen3-VL-Embedding-2B-FP8",
+      "batch_size": 1,
+      "token_length": 1024,
+      "avg_latency_ms": 57.37,
+      "p50_latency_ms": 57.65,
+      "p99_latency_ms": 58.84,
+      "throughput_tok_s": 17849.0,
+      "gpu_memory_mib": 21272,
+      "success": true
+    },
+    {
+      "model": "Qwen3-VL-Embedding-2B-FP8",
+      "batch_size": 16,
+      "token_length": 1024,
+      "avg_latency_ms": 831.51,
+      "p50_latency_ms": 831.78,
+      "p99_latency_ms": 834.25,
+      "throughput_tok_s": 19704.0,
+      "gpu_memory_mib": 21320,
+      "success": true
+    },
+    {
+      "model": "Qwen3-VL-Embedding-8B-FP8",
+      "batch_size": 1,
+      "token_length": 1024,
+      "success": false
+    },
+    {
+      "model": "Qwen3-VL-Embedding-8B-FP8",
+      "batch_size": 16,
+      "token_length": 1024,
+      "success": false
+    }
+  ]
+}

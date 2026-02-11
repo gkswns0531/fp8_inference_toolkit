@@ -1,0 +1,68 @@
+{
+  "BF16": {
+    "model": "Qwen/Qwen3-Embedding-4B",
+    "vram_mib": 19699,
+    "results": [
+      {
+        "batch_size": 1,
+        "tokens": 512,
+        "avg_ms": 97.14,
+        "p50_ms": 97.45,
+        "p99_ms": 98.29,
+        "throughput_tok_s": 5271.0
+      },
+      {
+        "batch_size": 8,
+        "tokens": 512,
+        "avg_ms": 667.15,
+        "p50_ms": 665.6,
+        "p99_ms": 674.62,
+        "throughput_tok_s": 6140.0
+      }
+    ]
+  },
+  "FP8": {
+    "model": "Qwen/Qwen3-Embedding-4B",
+    "vram_mib": 20079,
+    "results": [
+      {
+        "batch_size": 1,
+        "tokens": 512,
+        "avg_ms": 71.75,
+        "p50_ms": 72.3,
+        "p99_ms": 72.75,
+        "throughput_tok_s": 7136.0
+      },
+      {
+        "batch_size": 8,
+        "tokens": 512,
+        "avg_ms": 500.53,
+        "p50_ms": 503.46,
+        "p99_ms": 505.86,
+        "throughput_tok_s": 8183.0
+      }
+    ]
+  },
+  "INT4-TC": {
+    "model": "Qwen/Qwen3-Embedding-4B",
+    "vram_mib": 19269,
+    "results": [
+      {
+        "batch_size": 1,
+        "tokens": 512,
+        "avg_ms": 39.61,
+        "p50_ms": 39.96,
+        "p99_ms": 40.6,
+        "throughput_tok_s": 12927.0
+      },
+      {
+        "batch_size": 8,
+        "tokens": 512,
+        "avg_ms": 279.09,
+        "p50_ms": 279.85,
+        "p99_ms": 285.73,
+        "throughput_tok_s": 14676.0
+      }
+    ]
+  }
+}

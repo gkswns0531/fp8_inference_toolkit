@@ -1,0 +1,8 @@
+{
+    "model": "Forturne/Qwen3-VL-Embedding-8B-FP8",
+    "runner": "pooling",
+    "dtype": "auto",
+    "max_model_len": 4096,
+    "gpu_memory_utilization": 0.55,
+    "trust_remote_code": true
+}
