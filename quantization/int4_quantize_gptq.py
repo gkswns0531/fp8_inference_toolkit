@@ -64,10 +64,7 @@ HF_TOKEN = os.environ.get("HF_TOKEN", "")
 
 # 양자화할 모델 목록 (기본)
 DEFAULT_MODELS = [
-    "Qwen/Qwen3-Embedding-0.6B",
-    "Qwen/Qwen3-Embedding-4B",
-    # "Qwen/Qwen3-Embedding-8B",
-    # "BAAI/bge-m3",
+    "Qwen/Qwen3-Next-80B-A3B-Instruct",
 ]
 
 OUTPUT_BASE_DIR = "/home/ubuntu/models"
@@ -75,7 +72,7 @@ OUTPUT_BASE_DIR = "/home/ubuntu/models"
 # Calibration 설정
 DEFAULT_CALIBRATION_DATASET = "ultrachat_200k"
 DEFAULT_NUM_SAMPLES = 512
-DEFAULT_MAX_SEQ_LENGTH = 2048
+DEFAULT_MAX_SEQ_LENGTH = 8192
 DEFAULT_GROUP_SIZE = 128
 
 # Encoder-only 모델 타입
