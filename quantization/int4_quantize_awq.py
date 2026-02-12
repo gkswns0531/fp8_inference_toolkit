@@ -153,26 +153,47 @@ def detect_model_type(model_id: str) -> str:
 def get_ignore_patterns(model) -> list[str]:
     """모델 구조를 분석하여 양자화에서 제외할 레이어 패턴을 반환합니다.
 
-    MoE 모델의 gate/router는 양자화하면 expert 라우팅이 깨지므로 반드시 제외.
+    제외 대상:
+    - MoE gate/router: 양자화 시 expert 라우팅 결정 붕괴
+    - shared_expert_gate: shared/routed expert 혼합 비율 결정
+    - DeltaNet (linear_attn): recurrent state 누적 오차, conv1d 비호환
     """
     ignore = ["re:.*lm_head"]
 
-    gate_patterns = set()
-    for name, module in model.named_modules():
+    detected = set()
+    has_moe = False
+    has_linear_attn = False
+
+    for name, _ in model.named_modules():
         module_name = name.split(".")[-1]
 
-        # MoE routing gate (expert 선택용)
-        if module_name in ("gate",) and "moe" in name.lower():
+        # MoE routing gate
+        if module_name == "gate" and any(k in name for k in ("expert", "moe", "mlp.gate")):
             parent = ".".join(name.split(".")[-2:])
-            gate_patterns.add(f"re:.*{parent}$")
+            detected.add(f"re:.*{parent}$")
+            has_moe = True
 
-        # shared_expert_gate (shared/routed expert 혼합 비율)
+        # shared_expert_gate
         if module_name == "shared_expert_gate":
-            gate_patterns.add("re:.*shared_expert_gate")
+            detected.add("re:.*shared_expert_gate")
+            has_moe = True
 
-    if gate_patterns:
-        ignore.extend(sorted(gate_patterns))
-        print(f"MoE gate patterns detected (auto-ignored): {sorted(gate_patterns)}")
+        # DeltaNet (linear attention)
+        if module_name == "linear_attn" or (
+            "linear_attn" in name and module_name in ("in_proj_qkvz", "in_proj_ba", "out_proj", "conv1d")
+        ):
+            if not has_linear_attn:
+                detected.add("re:.*linear_attn.*")
+                has_linear_attn = True
+
+    if detected:
+        ignore.extend(sorted(detected))
+
+    if has_moe:
+        print(f"MoE model detected — gate/router layers excluded from quantization")
+    if has_linear_attn:
+        print(f"DeltaNet (linear_attn) detected — excluded from quantization")
+    print(f"Ignore patterns: {ignore}")
 
     return ignore
 
@@ -294,6 +315,7 @@ def quantize_and_upload(
         recipe=recipe,
         max_seq_length=max_seq_length,
         num_calibration_samples=num_samples,
+        tokenizer=tokenizer,
     )
     timing["quantization"] = time.time() - t0
     print(f"Quantization complete! ({timing['quantization']:.1f}s)")

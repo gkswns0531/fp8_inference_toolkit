@@ -18,6 +18,7 @@ Usage:
     4. vLLM에서 로드 시 자동으로 FP8 포맷 감지됨
 """
 
+import gc
 import os
 import torch
 from transformers import AutoProcessor, AutoTokenizer, AutoConfig, AutoModel
@@ -68,20 +69,37 @@ def get_ignore_patterns(model) -> list[str]:
     """모델 구조를 분석하여 양자화에서 제외할 레이어 패턴을 반환합니다."""
     ignore = ["re:.*lm_head"]
 
-    gate_patterns = set()
-    for name, module in model.named_modules():
+    detected = set()
+    has_moe = False
+    has_linear_attn = False
+
+    for name, _ in model.named_modules():
         module_name = name.split(".")[-1]
 
-        if module_name in ("gate",) and "moe" in name.lower():
+        if module_name == "gate" and any(k in name for k in ("expert", "moe", "mlp.gate")):
             parent = ".".join(name.split(".")[-2:])
-            gate_patterns.add(f"re:.*{parent}$")
+            detected.add(f"re:.*{parent}$")
+            has_moe = True
 
         if module_name == "shared_expert_gate":
-            gate_patterns.add("re:.*shared_expert_gate")
+            detected.add("re:.*shared_expert_gate")
+            has_moe = True
 
-    if gate_patterns:
-        ignore.extend(sorted(gate_patterns))
-        print(f"MoE gate patterns detected (auto-ignored): {sorted(gate_patterns)}")
+        if module_name == "linear_attn" or (
+            "linear_attn" in name and module_name in ("in_proj_qkvz", "in_proj_ba", "out_proj", "conv1d")
+        ):
+            if not has_linear_attn:
+                detected.add("re:.*linear_attn.*")
+                has_linear_attn = True
+
+    if detected:
+        ignore.extend(sorted(detected))
+
+    if has_moe:
+        print(f"MoE model detected — gate/router layers excluded from quantization")
+    if has_linear_attn:
+        print(f"DeltaNet (linear_attn) detected — excluded from quantization")
+    print(f"Ignore patterns: {ignore}")
 
     return ignore
 
@@ -113,18 +131,21 @@ def quantize_and_upload(model_id: str, output_dir: str, repo_id: str, hf_token: 
         model = Qwen3VLForConditionalGeneration.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
     elif mtype == "encoder":
         model = AutoModel.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(
             model_id,
             torch_dtype="auto",
+            device_map="auto",
             trust_remote_code=True,
         )
     print(f"Model class: {type(model).__name__}")
@@ -167,6 +188,7 @@ def quantize_and_upload(model_id: str, output_dir: str, repo_id: str, hf_token: 
 
     # 메모리 정리
     del model
+    gc.collect()
     torch.cuda.empty_cache()
 
 
