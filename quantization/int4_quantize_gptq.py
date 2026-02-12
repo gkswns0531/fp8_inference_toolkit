@@ -185,6 +185,35 @@ def detect_model_type(model_id: str) -> str:
     return "causal"
 
 
+def get_ignore_patterns(model) -> list[str]:
+    """모델 구조를 분석하여 양자화에서 제외할 레이어 패턴을 반환합니다.
+
+    MoE 모델의 gate/router는 양자화하면 expert 라우팅이 깨지므로 반드시 제외.
+    """
+    ignore = ["re:.*lm_head"]
+
+    # 모델의 named_modules에서 MoE gate/router 패턴 자동 감지
+    gate_patterns = set()
+    for name, module in model.named_modules():
+        module_name = name.split(".")[-1]
+
+        # MoE routing gate (expert 선택용) - 양자화 시 라우팅 결정 붕괴
+        if module_name in ("gate",) and "moe" in name.lower():
+            # e.g., model.layers.0.mlp_moe.gate → re:.*mlp_moe.gate$
+            parent = ".".join(name.split(".")[-2:])
+            gate_patterns.add(f"re:.*{parent}$")
+
+        # shared_expert_gate (shared/routed expert 혼합 비율)
+        if module_name == "shared_expert_gate":
+            gate_patterns.add("re:.*shared_expert_gate")
+
+    if gate_patterns:
+        ignore.extend(sorted(gate_patterns))
+        print(f"MoE gate patterns detected (auto-ignored): {sorted(gate_patterns)}")
+
+    return ignore
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Quantization
 # ─────────────────────────────────────────────────────────────────────────────
@@ -280,12 +309,15 @@ def quantize_and_upload(
     # 3. INT4 GPTQ 양자화 설정
     # W4A16: weight 4bit, activation 16bit (BF16/FP16)
     # W4A16 프리셋: group_size=128, symmetric=True, strategy=group
+    ignore = get_ignore_patterns(model)
+    print(f"Ignore patterns: {ignore}")
+
     if group_size == 128:
         # W4A16 프리셋 사용 (기본 group_size=128)
         recipe = GPTQModifier(
             targets="Linear",
             scheme="W4A16",
-            ignore=["re:.*lm_head"],
+            ignore=ignore,
         )
     else:
         # 커스텀 group_size는 config_groups로 지정
@@ -302,7 +334,7 @@ def quantize_and_upload(
                     ),
                 ),
             },
-            ignore=["re:.*lm_head"],
+            ignore=ignore,
         )
 
     # 4. Calibration 데이터 준비 (서브셋만 로드)

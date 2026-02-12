@@ -150,6 +150,33 @@ def detect_model_type(model_id: str) -> str:
     return "causal"
 
 
+def get_ignore_patterns(model) -> list[str]:
+    """모델 구조를 분석하여 양자화에서 제외할 레이어 패턴을 반환합니다.
+
+    MoE 모델의 gate/router는 양자화하면 expert 라우팅이 깨지므로 반드시 제외.
+    """
+    ignore = ["re:.*lm_head"]
+
+    gate_patterns = set()
+    for name, module in model.named_modules():
+        module_name = name.split(".")[-1]
+
+        # MoE routing gate (expert 선택용)
+        if module_name in ("gate",) and "moe" in name.lower():
+            parent = ".".join(name.split(".")[-2:])
+            gate_patterns.add(f"re:.*{parent}$")
+
+        # shared_expert_gate (shared/routed expert 혼합 비율)
+        if module_name == "shared_expert_gate":
+            gate_patterns.add("re:.*shared_expert_gate")
+
+    if gate_patterns:
+        ignore.extend(sorted(gate_patterns))
+        print(f"MoE gate patterns detected (auto-ignored): {sorted(gate_patterns)}")
+
+    return ignore
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Quantization
 # ─────────────────────────────────────────────────────────────────────────────
@@ -226,11 +253,14 @@ def quantize_and_upload(
     # AWQ: activation 통계 기반 scaling으로 중요 weight 채널 보존
     # 메모리 참고: AWQ는 calibration 샘플의 forward 입력을 캐시하므로
     #   충분한 GPU/시스템 메모리 필요 (8B: ~40GB+ 권장)
+    ignore = get_ignore_patterns(model)
+    print(f"Ignore patterns: {ignore}")
+
     if group_size == 128:
         recipe = AWQModifier(
             targets="Linear",
             scheme="W4A16",
-            ignore=["re:.*lm_head"],
+            ignore=ignore,
         )
     else:
         recipe = AWQModifier(
@@ -246,7 +276,7 @@ def quantize_and_upload(
                     ),
                 ),
             },
-            ignore=["re:.*lm_head"],
+            ignore=ignore,
         )
 
     # 4. Calibration 데이터 준비

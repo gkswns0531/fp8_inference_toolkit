@@ -64,6 +64,28 @@ def detect_model_type(model_id: str) -> str:
     return "causal"
 
 
+def get_ignore_patterns(model) -> list[str]:
+    """모델 구조를 분석하여 양자화에서 제외할 레이어 패턴을 반환합니다."""
+    ignore = ["re:.*lm_head"]
+
+    gate_patterns = set()
+    for name, module in model.named_modules():
+        module_name = name.split(".")[-1]
+
+        if module_name in ("gate",) and "moe" in name.lower():
+            parent = ".".join(name.split(".")[-2:])
+            gate_patterns.add(f"re:.*{parent}$")
+
+        if module_name == "shared_expert_gate":
+            gate_patterns.add("re:.*shared_expert_gate")
+
+    if gate_patterns:
+        ignore.extend(sorted(gate_patterns))
+        print(f"MoE gate patterns detected (auto-ignored): {sorted(gate_patterns)}")
+
+    return ignore
+
+
 def quantize_and_upload(model_id: str, output_dir: str, repo_id: str, hf_token: str):
     """단일 모델 FP8 양자화 및 업로드."""
 
@@ -109,13 +131,13 @@ def quantize_and_upload(model_id: str, output_dir: str, repo_id: str, hf_token: 
 
     # 3. FP8 양자화 설정
     # Vision encoder 포함 모든 Linear 레이어 양자화
+    ignore = get_ignore_patterns(model)
+    print(f"Ignore patterns: {ignore}")
+
     recipe = QuantizationModifier(
         targets="Linear",
         scheme="FP8_DYNAMIC",
-        ignore=[
-            "re:.*lm_head",  # lm_head는 제외 (embedding 모델에서 불필요)
-            # Vision 패턴 제외하지 않음 -> Vision Encoder도 FP8 양자화됨
-        ],
+        ignore=ignore,
     )
 
     # 4. 양자화 실행
