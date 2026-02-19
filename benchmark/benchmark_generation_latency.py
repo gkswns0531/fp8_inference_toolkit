@@ -65,6 +65,7 @@ GENERATION_MODELS = [
 
 DEFAULT_INPUT_LENGTHS = [1024, 4096, 8192, 16384, 32768, 65536, 131072]
 DEFAULT_OUTPUT_LENGTHS = [256, 1024, 4096]
+DEFAULT_BATCH_SIZES = [1, 5, 10, 20]
 DEFAULT_NUM_WARMUP = 2
 DEFAULT_NUM_RUNS = 5
 DEFAULT_TP_SIZE = 1
@@ -128,6 +129,7 @@ def benchmark_model(
     max_context: int,
     input_lengths: list[int],
     output_lengths: list[int],
+    batch_sizes: list[int],
     num_warmup: int,
     num_runs: int,
     tensor_parallel_size: int,
@@ -166,69 +168,70 @@ def benchmark_model(
                       f"(total {input_len + output_len} > max {effective_max})")
                 continue
 
-            print(f"    input={input_len:>6}, output={output_len:>4}", end="", flush=True)
+            for batch_size in batch_sizes:
+                print(f"    input={input_len:>6}, output={output_len:>4}, batch={batch_size:>2}",
+                      end="", flush=True)
 
-            text = get_test_text(tokenizer_dir, input_len)
-            sampling_params = SamplingParams(
-                max_tokens=output_len,
-                temperature=0,
-            )
+                text = get_test_text(tokenizer_dir, input_len)
+                batch_texts = [text] * batch_size
+                sampling_params = SamplingParams(
+                    max_tokens=output_len,
+                    temperature=0,
+                )
 
-            # Warmup with random text
-            for _ in range(num_warmup):
-                warmup_text = make_random_text(int(input_len * 1.5))
-                llm.generate([warmup_text], sampling_params)
+                # Warmup with random text
+                for _ in range(num_warmup):
+                    warmup_texts = [make_random_text(int(input_len * 1.5)) for _ in range(batch_size)]
+                    llm.generate(warmup_texts, sampling_params)
 
-            # Timed runs
-            total_latencies = []
-            output_token_counts = []
+                # Timed runs
+                total_latencies = []
+                output_token_counts = []
 
-            for _ in range(num_runs):
-                t0 = time.perf_counter()
-                outputs = llm.generate([text], sampling_params)
-                total_elapsed_ms = (time.perf_counter() - t0) * 1000
+                for _ in range(num_runs):
+                    t0 = time.perf_counter()
+                    outputs = llm.generate(batch_texts, sampling_params)
+                    total_elapsed_ms = (time.perf_counter() - t0) * 1000
 
-                # Extract output info
-                output_obj = outputs[0]
-                generated_tokens = len(output_obj.outputs[0].token_ids)
-                output_token_counts.append(generated_tokens)
+                    # Sum generated tokens across the batch
+                    batch_gen_tokens = sum(
+                        len(out.outputs[0].token_ids) for out in outputs
+                    )
+                    output_token_counts.append(batch_gen_tokens)
+                    total_latencies.append(total_elapsed_ms)
 
-                # TTFT: For offline/batch mode, we approximate TTFT as
-                # total_time / generated_tokens (time per token) for the first token.
-                # In online mode, TTFT would be measured via streaming.
-                # Here we report total latency and per-token throughput.
-                total_latencies.append(total_elapsed_ms)
+                avg_total = float(np.mean(total_latencies))
+                std_total = float(np.std(total_latencies))
+                p50_total = float(np.percentile(total_latencies, 50))
+                p99_total = float(np.percentile(total_latencies, 99))
+                avg_output_tokens = float(np.mean(output_token_counts))
 
-            avg_total = float(np.mean(total_latencies))
-            std_total = float(np.std(total_latencies))
-            p50_total = float(np.percentile(total_latencies, 50))
-            p99_total = float(np.percentile(total_latencies, 99))
-            avg_output_tokens = float(np.mean(output_token_counts))
+                # Throughput: total output tokens per second (across batch)
+                output_tok_per_sec = avg_output_tokens / (avg_total / 1000) if avg_total > 0 else 0
+                # Total throughput: (input + output) tokens per second
+                total_tok_per_sec = (input_len * batch_size + avg_output_tokens) / (avg_total / 1000) if avg_total > 0 else 0
 
-            # Throughput: output tokens per second
-            output_tok_per_sec = avg_output_tokens / (avg_total / 1000) if avg_total > 0 else 0
-            # Total throughput: (input + output) tokens per second
-            total_tok_per_sec = (input_len + avg_output_tokens) / (avg_total / 1000) if avg_total > 0 else 0
+                result = {
+                    "model": model_id,
+                    "batch_size": batch_size,
+                    "input_tokens": input_len,
+                    "output_tokens_requested": output_len,
+                    "output_tokens_actual": round(avg_output_tokens / batch_size, 1),
+                    "batch_output_tokens_total": round(avg_output_tokens, 1),
+                    "num_runs": num_runs,
+                    "avg_total_latency_ms": round(avg_total, 2),
+                    "std_total_latency_ms": round(std_total, 2),
+                    "p50_total_latency_ms": round(p50_total, 2),
+                    "p99_total_latency_ms": round(p99_total, 2),
+                    "output_tok_per_sec": round(output_tok_per_sec, 1),
+                    "total_tok_per_sec": round(total_tok_per_sec, 1),
+                    "tensor_parallel_size": tensor_parallel_size,
+                    "gpu_memory_mib": gpu_mem_loaded,
+                }
+                results.append(result)
 
-            result = {
-                "model": model_id,
-                "input_tokens": input_len,
-                "output_tokens_requested": output_len,
-                "output_tokens_actual": round(avg_output_tokens, 1),
-                "num_runs": num_runs,
-                "avg_total_latency_ms": round(avg_total, 2),
-                "std_total_latency_ms": round(std_total, 2),
-                "p50_total_latency_ms": round(p50_total, 2),
-                "p99_total_latency_ms": round(p99_total, 2),
-                "output_tok_per_sec": round(output_tok_per_sec, 1),
-                "total_tok_per_sec": round(total_tok_per_sec, 1),
-                "tensor_parallel_size": tensor_parallel_size,
-                "gpu_memory_mib": gpu_mem_loaded,
-            }
-            results.append(result)
-
-            print(f"  -> avg={avg_total:.0f}ms  p50={p50_total:.0f}ms  p99={p99_total:.0f}ms  "
-                  f"out_tok/s={output_tok_per_sec:.1f}  gen_tokens={avg_output_tokens:.0f}")
+                print(f"  -> avg={avg_total:.0f}ms  p50={p50_total:.0f}ms  p99={p99_total:.0f}ms  "
+                      f"out_tok/s={output_tok_per_sec:.1f}  gen_tokens={avg_output_tokens:.0f}")
 
     # Cleanup
     del llm
@@ -248,19 +251,19 @@ def benchmark_model(
 
 def print_summary_table(all_results: list[dict]):
     """Print a comparison table organized by input length × output length."""
-    print("\n" + "=" * 130)
+    print("\n" + "=" * 140)
     print("SUMMARY: Generation Model Latency Comparison")
-    print("=" * 130)
-    print(f"{'Model':<40} {'In':>7} {'Out':>5} {'Actual':>6} {'Avg(ms)':>10} {'Std':>8} "
+    print("=" * 140)
+    print(f"{'Model':<35} {'Batch':>5} {'In':>7} {'Out':>5} {'Actual':>6} {'Avg(ms)':>10} {'Std':>8} "
           f"{'P50(ms)':>10} {'P99(ms)':>10} {'Out tok/s':>10} {'TP':>3} {'GPU(MiB)':>9}")
-    print("─" * 130)
+    print("─" * 140)
 
     for r in all_results:
         model_short = r["model"].split("/")[-1]
-        if len(model_short) > 38:
-            model_short = model_short[:38]
-        print(f"{model_short:<40} {r['input_tokens']:>7} {r['output_tokens_requested']:>5} "
-              f"{r['output_tokens_actual']:>6.0f} "
+        if len(model_short) > 33:
+            model_short = model_short[:33]
+        print(f"{model_short:<35} {r['batch_size']:>5} {r['input_tokens']:>7} "
+              f"{r['output_tokens_requested']:>5} {r['output_tokens_actual']:>6.0f} "
               f"{r['avg_total_latency_ms']:>10.0f} {r['std_total_latency_ms']:>8.0f} "
               f"{r['p50_total_latency_ms']:>10.0f} {r['p99_total_latency_ms']:>10.0f} "
               f"{r['output_tok_per_sec']:>10.1f} {r['tensor_parallel_size']:>3} "
@@ -301,6 +304,12 @@ def parse_args():
         help=f"Comma-separated output token lengths (default: {DEFAULT_OUTPUT_LENGTHS})",
     )
     parser.add_argument(
+        "--batch-sizes",
+        type=str,
+        default=",".join(str(b) for b in DEFAULT_BATCH_SIZES),
+        help=f"Comma-separated batch sizes (default: {DEFAULT_BATCH_SIZES})",
+    )
+    parser.add_argument(
         "--num-warmup",
         type=int,
         default=DEFAULT_NUM_WARMUP,
@@ -337,6 +346,7 @@ def main():
     args = parse_args()
     input_lengths = sorted(int(x) for x in args.input_lengths.split(","))
     output_lengths = sorted(int(x) for x in args.output_lengths.split(","))
+    batch_sizes = [int(x) for x in args.batch_sizes.split(",")]
 
     # Filter models
     if args.model:
@@ -354,6 +364,7 @@ def main():
     print(f"  Models:        {[m['model_id'] for m in models]}")
     print(f"  Input lengths: {input_lengths}")
     print(f"  Output lengths:{output_lengths}")
+    print(f"  Batch sizes:   {batch_sizes}")
     print(f"  TP size:       {args.tensor_parallel_size}")
     print(f"  Warmup:        {args.num_warmup}")
     print(f"  Runs:          {args.num_runs}")
@@ -377,6 +388,7 @@ def main():
                 max_context=model_cfg["max_context"],
                 input_lengths=input_lengths,
                 output_lengths=output_lengths,
+                batch_sizes=batch_sizes,
                 num_warmup=args.num_warmup,
                 num_runs=args.num_runs,
                 tensor_parallel_size=args.tensor_parallel_size,
@@ -402,6 +414,7 @@ def main():
         "config": {
             "input_lengths": input_lengths,
             "output_lengths": output_lengths,
+            "batch_sizes": batch_sizes,
             "tensor_parallel_size": args.tensor_parallel_size,
             "num_warmup": args.num_warmup,
             "num_runs": args.num_runs,
