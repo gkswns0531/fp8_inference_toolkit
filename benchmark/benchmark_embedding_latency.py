@@ -26,7 +26,6 @@ Usage:
 import argparse
 import json
 import os
-import random
 import sys
 import time
 
@@ -75,43 +74,54 @@ DEFAULT_INPUT_LENGTHS = [128, 256, 512, 1024, 2048, 4096, 8192]
 DEFAULT_NUM_WARMUP = 3
 DEFAULT_NUM_RUNS = 10
 DEFAULT_GPU_MEM = 0.90
-DEFAULT_MAX_MODEL_LEN = 8192
+DEFAULT_MAX_MODEL_LEN = 8200
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data")
-
-WORDS = [
-    "the", "cat", "dog", "house", "car", "book", "computer", "phone",
-    "water", "food", "happy", "sad", "big", "small", "red", "blue",
-    "mountain", "river", "ocean", "forest", "quantum", "photon", "neutron",
-    "algebra", "calculus", "geometry", "topology", "entropy", "inertia",
-    "whisper", "thunder", "silence", "rhythm", "harmony", "melody",
-]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
-def make_random_text(num_words: int) -> str:
-    return " ".join(random.choices(WORDS, k=num_words))
-
-
-def load_test_text(tokenizer_dir: str, length: int) -> str | None:
-    """Load pre-generated test text from test_data directory."""
-    filepath = os.path.join(TEST_DATA_DIR, tokenizer_dir, f"{length}_tokens.txt")
-    if not os.path.exists(filepath):
-        return None
-    with open(filepath, "r", encoding="utf-8") as f:
+def load_source_text() -> str:
+    """Load cached War and Peace source text for slicing."""
+    cache_path = os.path.join(TEST_DATA_DIR, "war_and_peace.txt")
+    if not os.path.exists(cache_path):
+        raise FileNotFoundError(
+            f"Source text not found: {cache_path}\n"
+            "Run prepare_test_data.py first to download the source text."
+        )
+    with open(cache_path, "r", encoding="utf-8") as f:
         return f.read()
 
 
-def get_test_text(tokenizer_dir: str, length: int) -> str:
-    """Load test text or fall back to random text."""
-    text = load_test_text(tokenizer_dir, length)
-    if text is not None:
-        return text
-    # Fallback: approximate tokens as 0.75 * num_words
-    return make_random_text(int(length * 1.5))
+def prepare_exact_token_texts(
+    tokenizer,
+    source_tokens: list[int],
+    length: int,
+    count: int,
+    stride: int = 100,
+) -> list[str]:
+    """Create `count` different texts, each exactly `length` tokens.
+
+    Slices source_tokens at staggered offsets so each text has different content
+    but identical token count. Re-encodes to verify and trims if round-trip
+    produces a different count.
+    """
+    texts = []
+    offset = 0
+    for _ in range(count):
+        if offset + length > len(source_tokens):
+            offset = 0
+        segment = source_tokens[offset:offset + length]
+        text = tokenizer.decode(segment, skip_special_tokens=True)
+        # Verify round-trip token count; trim if boundary caused mismatch
+        re_encoded = tokenizer.encode(text, add_special_tokens=False)
+        if len(re_encoded) != length:
+            text = tokenizer.decode(re_encoded[:length], skip_special_tokens=True)
+        texts.append(text)
+        offset += stride
+    return texts
 
 
 def get_gpu_memory_mib() -> int | None:
@@ -155,15 +165,23 @@ def benchmark_model(
     print(f"  Loading model with vLLM (runner=pooling, max_model_len={model_max_len}) ...")
     llm = LLM(
         model=model_id,
-        task="embed",
+        runner="pooling",
+        convert="embed",
         max_model_len=model_max_len,
         gpu_memory_utilization=gpu_memory_utilization,
         trust_remote_code=True,
-        enforce_eager=True,
+        enforce_eager=False,
     )
 
     gpu_mem_loaded = get_gpu_memory_mib()
     print(f"  GPU memory after load: {gpu_mem_loaded} MiB")
+
+    # Tokenize source text once for exact-length slicing
+    print(f"  Tokenizing source text for exact-length slicing ...")
+    source_text = load_source_text()
+    tokenizer = llm.get_tokenizer()
+    source_tokens = tokenizer.encode(source_text, add_special_tokens=False)
+    print(f"  Source tokens available: {len(source_tokens):,}")
 
     results = []
 
@@ -171,43 +189,52 @@ def benchmark_model(
         for batch_size in batch_sizes:
             print(f"    tokens={length:>6}, batch={batch_size:>2}", end="", flush=True)
 
-            text = get_test_text(tokenizer_dir, length)
+            try:
+                total_texts_needed = batch_size * (num_warmup + num_runs)
+                all_texts = prepare_exact_token_texts(
+                    tokenizer, source_tokens, length, total_texts_needed,
+                )
+                text_idx = 0
 
-            # Warmup with random text to avoid cache effects
-            for _ in range(num_warmup):
-                warmup_texts = [make_random_text(int(length * 1.5)) for _ in range(batch_size)]
-                llm.embed(warmup_texts)
+                # Warmup with exact-length texts (different content each)
+                for _ in range(num_warmup):
+                    warmup_texts = all_texts[text_idx:text_idx + batch_size]
+                    text_idx += batch_size
+                    llm.embed(warmup_texts)
 
-            # Timed runs
-            latencies = []
-            for _ in range(num_runs):
-                batch_texts = [text] * batch_size
-                t0 = time.perf_counter()
-                llm.embed(batch_texts)
-                elapsed_ms = (time.perf_counter() - t0) * 1000
-                latencies.append(elapsed_ms)
+                # Timed runs (each batch item has different content, same token count)
+                latencies = []
+                for _ in range(num_runs):
+                    batch_texts = all_texts[text_idx:text_idx + batch_size]
+                    text_idx += batch_size
+                    t0 = time.perf_counter()
+                    llm.embed(batch_texts)
+                    elapsed_ms = (time.perf_counter() - t0) * 1000
+                    latencies.append(elapsed_ms)
 
-            avg = float(np.mean(latencies))
-            std = float(np.std(latencies))
-            p50 = float(np.percentile(latencies, 50))
-            p99 = float(np.percentile(latencies, 99))
-            throughput = (batch_size * length) / (avg / 1000)
+                avg = float(np.mean(latencies))
+                std = float(np.std(latencies))
+                p50 = float(np.percentile(latencies, 50))
+                p99 = float(np.percentile(latencies, 99))
+                throughput = (batch_size * length) / (avg / 1000)
 
-            result = {
-                "model": model_id,
-                "input_tokens": length,
-                "batch_size": batch_size,
-                "num_runs": num_runs,
-                "avg_latency_ms": round(avg, 2),
-                "std_latency_ms": round(std, 2),
-                "p50_latency_ms": round(p50, 2),
-                "p99_latency_ms": round(p99, 2),
-                "throughput_tok_s": round(throughput, 0),
-                "gpu_memory_mib": gpu_mem_loaded,
-            }
-            results.append(result)
+                result = {
+                    "model": model_id,
+                    "input_tokens": length,
+                    "batch_size": batch_size,
+                    "num_runs": num_runs,
+                    "avg_latency_ms": round(avg, 2),
+                    "std_latency_ms": round(std, 2),
+                    "p50_latency_ms": round(p50, 2),
+                    "p99_latency_ms": round(p99, 2),
+                    "throughput_tok_s": round(throughput, 0),
+                    "gpu_memory_mib": gpu_mem_loaded,
+                }
+                results.append(result)
 
-            print(f"  -> avg={avg:.1f}ms  std={std:.1f}  p50={p50:.1f}ms  p99={p99:.1f}ms  {throughput:.0f} tok/s")
+                print(f"  -> avg={avg:.1f}ms  std={std:.1f}  p50={p50:.1f}ms  p99={p99:.1f}ms  {throughput:.0f} tok/s")
+            except Exception as e:
+                print(f"  SKIP ({e})")
 
     # Cleanup GPU memory
     del llm
