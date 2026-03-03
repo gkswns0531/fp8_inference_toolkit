@@ -1,0 +1,1176 @@
+{
+  "timestamp": "2026-03-03",
+  "top_k": 10,
+  "results": [
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "model_key": "vl-8b",
+      "precision": "bf16",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.713,
+            "perfect_match@10": 0.4667,
+            "ndcg@10": 0.6374,
+            "mrr": 0.4612
+          },
+          "embed_time_sec": 44.9
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.9055,
+            "perfect_match@10": 0.8096,
+            "ndcg@10": 0.894,
+            "mrr": 0.6854
+          },
+          "embed_time_sec": 15.0
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.6431,
+            "perfect_match@10": 0.3868,
+            "ndcg@10": 0.5474,
+            "mrr": 0.39630000000000004
+          },
+          "embed_time_sec": 69.4
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.8193,
+            "perfect_match@10": 0.6271,
+            "ndcg@10": 0.7629,
+            "mrr": 0.5495
+          },
+          "embed_time_sec": 52.9
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.9301999999999999,
+            "perfect_match@10": 0.907,
+            "ndcg@10": 0.784,
+            "mrr": 0.715
+          },
+          "embed_time_sec": 118.9
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.7787000000000001,
+            "perfect_match@10": 0.7376999999999999,
+            "ndcg@10": 0.5855,
+            "mrr": 0.4976
+          },
+          "embed_time_sec": 77.3
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.9538,
+            "perfect_match@10": 0.9538,
+            "ndcg@10": 0.8120999999999999,
+            "mrr": 0.7643000000000001
+          },
+          "embed_time_sec": 6.5
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9375,
+            "perfect_match@10": 0.9375,
+            "ndcg@10": 0.8556999999999999,
+            "mrr": 0.7961
+          },
+          "embed_time_sec": 188.7
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.9531000000000001,
+            "perfect_match@10": 0.9475,
+            "ndcg@10": 0.8223999999999999,
+            "mrr": 0.7655
+          },
+          "embed_time_sec": 10.9
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.5909,
+            "perfect_match@10": 0.5909,
+            "ndcg@10": 0.457,
+            "mrr": 0.4266
+          },
+          "embed_time_sec": 63.2
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.7609,
+            "perfect_match@10": 0.6522,
+            "ndcg@10": 0.6636,
+            "mrr": 0.5917
+          },
+          "embed_time_sec": 138.6
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.8946999999999999,
+            "perfect_match@10": 0.8895000000000001,
+            "ndcg@10": 0.7381,
+            "mrr": 0.6843
+          },
+          "embed_time_sec": 11.7
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.7579,
+            "perfect_match@10": 0.7263,
+            "ndcg@10": 0.5418,
+            "mrr": 0.45289999999999997
+          },
+          "embed_time_sec": 56.2
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.7184,
+            "perfect_match@10": 0.7011,
+            "ndcg@10": 0.5281,
+            "mrr": 0.4617
+          },
+          "embed_time_sec": 14.7
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.9704,
+            "perfect_match@10": 0.9655,
+            "ndcg@10": 0.8784000000000001,
+            "mrr": 0.8354
+          },
+          "embed_time_sec": 125.6
+        }
+      },
+      "overall": {
+        "coverage@10": 0.8218000000000001,
+        "perfect_match@10": 0.7533,
+        "ndcg@10": 0.7006,
+        "mrr": 0.6056
+      },
+      "embedding_times": {
+        "finance": 44.9,
+        "hotpot": 15.0,
+        "legal": 69.4,
+        "patent": 52.9,
+        "gugak": 118.9,
+        "hanhwa_insurance": 77.3,
+        "isu_system": 6.5,
+        "jacs": 188.7,
+        "mirae_asset": 10.9,
+        "ok_finance": 63.2,
+        "sejong": 138.6,
+        "skens": 11.7,
+        "sumitomo": 56.2,
+        "trans_cosmos": 14.7,
+        "yuhan_kimberly": 125.6
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "model_key": "vl-8b",
+      "precision": "fp8",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.7172,
+            "perfect_match@10": 0.4775,
+            "ndcg@10": 0.6456000000000001,
+            "mrr": 0.4694
+          },
+          "embed_time_sec": 27.6
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.9013,
+            "perfect_match@10": 0.7936,
+            "ndcg@10": 0.8928,
+            "mrr": 0.6859999999999999
+          },
+          "embed_time_sec": 9.4
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.6464,
+            "perfect_match@10": 0.3983,
+            "ndcg@10": 0.5475,
+            "mrr": 0.3947
+          },
+          "embed_time_sec": 42.1
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.8189,
+            "perfect_match@10": 0.6292,
+            "ndcg@10": 0.7634000000000001,
+            "mrr": 0.5488000000000001
+          },
+          "embed_time_sec": 32.2
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.9301999999999999,
+            "perfect_match@10": 0.907,
+            "ndcg@10": 0.7955,
+            "mrr": 0.7321
+          },
+          "embed_time_sec": 74.9
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.7678,
+            "perfect_match@10": 0.7322,
+            "ndcg@10": 0.5848,
+            "mrr": 0.4997
+          },
+          "embed_time_sec": 48.0
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.9538,
+            "perfect_match@10": 0.9538,
+            "ndcg@10": 0.8073999999999999,
+            "mrr": 0.758
+          },
+          "embed_time_sec": 4.0
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9375,
+            "perfect_match@10": 0.9375,
+            "ndcg@10": 0.8373,
+            "mrr": 0.769
+          },
+          "embed_time_sec": 115.8
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.9499,
+            "perfect_match@10": 0.9444,
+            "ndcg@10": 0.8258,
+            "mrr": 0.7713
+          },
+          "embed_time_sec": 6.7
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.5909,
+            "perfect_match@10": 0.5909,
+            "ndcg@10": 0.46659999999999996,
+            "mrr": 0.44020000000000004
+          },
+          "embed_time_sec": 40.5
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.7609,
+            "perfect_match@10": 0.6522,
+            "ndcg@10": 0.6601,
+            "mrr": 0.5863
+          },
+          "embed_time_sec": 84.9
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.9,
+            "perfect_match@10": 0.8946999999999999,
+            "ndcg@10": 0.732,
+            "mrr": 0.6746
+          },
+          "embed_time_sec": 7.1
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.7579,
+            "perfect_match@10": 0.7263,
+            "ndcg@10": 0.5467,
+            "mrr": 0.45909999999999995
+          },
+          "embed_time_sec": 34.9
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.7414000000000001,
+            "perfect_match@10": 0.7241,
+            "ndcg@10": 0.5095000000000001,
+            "mrr": 0.4289
+          },
+          "embed_time_sec": 9.3
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.9754,
+            "perfect_match@10": 0.9704,
+            "ndcg@10": 0.8811,
+            "mrr": 0.8371
+          },
+          "embed_time_sec": 78.0
+        }
+      },
+      "overall": {
+        "coverage@10": 0.8233,
+        "perfect_match@10": 0.7555,
+        "ndcg@10": 0.6997,
+        "mrr": 0.6037
+      },
+      "embedding_times": {
+        "finance": 27.6,
+        "hotpot": 9.4,
+        "legal": 42.1,
+        "patent": 32.2,
+        "gugak": 74.9,
+        "hanhwa_insurance": 48.0,
+        "isu_system": 4.0,
+        "jacs": 115.8,
+        "mirae_asset": 6.7,
+        "ok_finance": 40.5,
+        "sejong": 84.9,
+        "skens": 7.1,
+        "sumitomo": 34.9,
+        "trans_cosmos": 9.3,
+        "yuhan_kimberly": 78.0
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "model_key": "vl-8b",
+      "precision": "nvfp4",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.72,
+            "perfect_match@10": 0.4744,
+            "ndcg@10": 0.6448999999999999,
+            "mrr": 0.4664
+          },
+          "embed_time_sec": 19.8
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.8878,
+            "perfect_match@10": 0.7631,
+            "ndcg@10": 0.8758,
+            "mrr": 0.6748000000000001
+          },
+          "embed_time_sec": 6.8
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.6362,
+            "perfect_match@10": 0.3884,
+            "ndcg@10": 0.5326,
+            "mrr": 0.3807
+          },
+          "embed_time_sec": 30.0
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.8304,
+            "perfect_match@10": 0.6479,
+            "ndcg@10": 0.7625,
+            "mrr": 0.5455
+          },
+          "embed_time_sec": 22.9
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.8488,
+            "perfect_match@10": 0.8140000000000001,
+            "ndcg@10": 0.7095999999999999,
+            "mrr": 0.6467
+          },
+          "embed_time_sec": 55.2
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.7951,
+            "perfect_match@10": 0.765,
+            "ndcg@10": 0.5700999999999999,
+            "mrr": 0.4697
+          },
+          "embed_time_sec": 34.9
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.9308,
+            "perfect_match@10": 0.9308,
+            "ndcg@10": 0.7828,
+            "mrr": 0.7331
+          },
+          "embed_time_sec": 2.9
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9688,
+            "perfect_match@10": 0.9688,
+            "ndcg@10": 0.8565999999999999,
+            "mrr": 0.7824
+          },
+          "embed_time_sec": 83.5
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.9436,
+            "perfect_match@10": 0.9396,
+            "ndcg@10": 0.807,
+            "mrr": 0.7483
+          },
+          "embed_time_sec": 4.9
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.5909,
+            "perfect_match@10": 0.5909,
+            "ndcg@10": 0.4058,
+            "mrr": 0.3563
+          },
+          "embed_time_sec": 30.4
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.7391,
+            "perfect_match@10": 0.6522,
+            "ndcg@10": 0.6869,
+            "mrr": 0.6275999999999999
+          },
+          "embed_time_sec": 61.2
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.9131999999999999,
+            "perfect_match@10": 0.9105,
+            "ndcg@10": 0.7145999999999999,
+            "mrr": 0.6468
+          },
+          "embed_time_sec": 5.1
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.7211,
+            "perfect_match@10": 0.6842,
+            "ndcg@10": 0.5292,
+            "mrr": 0.4471
+          },
+          "embed_time_sec": 25.5
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.7241,
+            "perfect_match@10": 0.7011,
+            "ndcg@10": 0.5251,
+            "mrr": 0.4569
+          },
+          "embed_time_sec": 6.9
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.9531999999999999,
+            "perfect_match@10": 0.9506999999999999,
+            "ndcg@10": 0.851,
+            "mrr": 0.807
+          },
+          "embed_time_sec": 56.6
+        }
+      },
+      "overall": {
+        "coverage@10": 0.8134999999999999,
+        "perfect_match@10": 0.7454000000000001,
+        "ndcg@10": 0.6836,
+        "mrr": 0.586
+      },
+      "embedding_times": {
+        "finance": 19.8,
+        "hotpot": 6.8,
+        "legal": 30.0,
+        "patent": 22.9,
+        "gugak": 55.2,
+        "hanhwa_insurance": 34.9,
+        "isu_system": 2.9,
+        "jacs": 83.5,
+        "mirae_asset": 4.9,
+        "ok_finance": 30.4,
+        "sejong": 61.2,
+        "skens": 5.1,
+        "sumitomo": 25.5,
+        "trans_cosmos": 6.9,
+        "yuhan_kimberly": 56.6
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "model_key": "vl-2b",
+      "precision": "bf16",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.6812999999999999,
+            "perfect_match@10": 0.4202,
+            "ndcg@10": 0.6076,
+            "mrr": 0.4399
+          },
+          "embed_time_sec": 10.8
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.8314,
+            "perfect_match@10": 0.6759000000000001,
+            "ndcg@10": 0.8137000000000001,
+            "mrr": 0.6368
+          },
+          "embed_time_sec": 3.7
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.5982999999999999,
+            "perfect_match@10": 0.3521,
+            "ndcg@10": 0.4954,
+            "mrr": 0.3544
+          },
+          "embed_time_sec": 16.4
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.8054000000000001,
+            "perfect_match@10": 0.5979,
+            "ndcg@10": 0.7392,
+            "mrr": 0.5276
+          },
+          "embed_time_sec": 12.5
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.7558,
+            "perfect_match@10": 0.7209,
+            "ndcg@10": 0.6173,
+            "mrr": 0.5608
+          },
+          "embed_time_sec": 29.2
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.6720999999999999,
+            "perfect_match@10": 0.6284000000000001,
+            "ndcg@10": 0.47850000000000004,
+            "mrr": 0.3981
+          },
+          "embed_time_sec": 18.8
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.9,
+            "perfect_match@10": 0.9,
+            "ndcg@10": 0.7345999999999999,
+            "mrr": 0.682
+          },
+          "embed_time_sec": 1.6
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9062,
+            "perfect_match@10": 0.875,
+            "ndcg@10": 0.7044,
+            "mrr": 0.6143
+          },
+          "embed_time_sec": 45.5
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.9086,
+            "perfect_match@10": 0.9014,
+            "ndcg@10": 0.7552,
+            "mrr": 0.6959000000000001
+          },
+          "embed_time_sec": 2.7
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.7726999999999999,
+            "perfect_match@10": 0.7726999999999999,
+            "ndcg@10": 0.5046,
+            "mrr": 0.4294
+          },
+          "embed_time_sec": 15.9
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.6957,
+            "perfect_match@10": 0.6087,
+            "ndcg@10": 0.5550999999999999,
+            "mrr": 0.47740000000000005
+          },
+          "embed_time_sec": 33.3
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.8158,
+            "perfect_match@10": 0.8105,
+            "ndcg@10": 0.6253,
+            "mrr": 0.5665
+          },
+          "embed_time_sec": 2.8
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.6737000000000001,
+            "perfect_match@10": 0.6420999999999999,
+            "ndcg@10": 0.4899,
+            "mrr": 0.41590000000000005
+          },
+          "embed_time_sec": 13.8
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.6724,
+            "perfect_match@10": 0.6552,
+            "ndcg@10": 0.4316,
+            "mrr": 0.3533
+          },
+          "embed_time_sec": 3.7
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.9409000000000001,
+            "perfect_match@10": 0.9359999999999999,
+            "ndcg@10": 0.8271,
+            "mrr": 0.7784
+          },
+          "embed_time_sec": 30.6
+        }
+      },
+      "overall": {
+        "coverage@10": 0.7754000000000001,
+        "perfect_match@10": 0.6998000000000001,
+        "ndcg@10": 0.6253,
+        "mrr": 0.5287
+      },
+      "embedding_times": {
+        "finance": 10.8,
+        "hotpot": 3.7,
+        "legal": 16.4,
+        "patent": 12.5,
+        "gugak": 29.2,
+        "hanhwa_insurance": 18.8,
+        "isu_system": 1.6,
+        "jacs": 45.5,
+        "mirae_asset": 2.7,
+        "ok_finance": 15.9,
+        "sejong": 33.3,
+        "skens": 2.8,
+        "sumitomo": 13.8,
+        "trans_cosmos": 3.7,
+        "yuhan_kimberly": 30.6
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "model_key": "vl-2b",
+      "precision": "fp8",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.6765000000000001,
+            "perfect_match@10": 0.4264,
+            "ndcg@10": 0.6053000000000001,
+            "mrr": 0.4409
+          },
+          "embed_time_sec": 7.2
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.8338,
+            "perfect_match@10": 0.6773,
+            "ndcg@10": 0.8161,
+            "mrr": 0.6378
+          },
+          "embed_time_sec": 2.5
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.5982,
+            "perfect_match@10": 0.3603,
+            "ndcg@10": 0.4917,
+            "mrr": 0.34950000000000003
+          },
+          "embed_time_sec": 10.7
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.8134999999999999,
+            "perfect_match@10": 0.6103999999999999,
+            "ndcg@10": 0.7362000000000001,
+            "mrr": 0.5219
+          },
+          "embed_time_sec": 8.2
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.7442,
+            "perfect_match@10": 0.7209,
+            "ndcg@10": 0.6197,
+            "mrr": 0.569
+          },
+          "embed_time_sec": 19.9
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.6694,
+            "perfect_match@10": 0.623,
+            "ndcg@10": 0.46270000000000006,
+            "mrr": 0.3797
+          },
+          "embed_time_sec": 12.5
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.9,
+            "perfect_match@10": 0.9,
+            "ndcg@10": 0.7177,
+            "mrr": 0.6595
+          },
+          "embed_time_sec": 1.0
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9062,
+            "perfect_match@10": 0.875,
+            "ndcg@10": 0.7223,
+            "mrr": 0.6339
+          },
+          "embed_time_sec": 29.8
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.9014,
+            "perfect_match@10": 0.8967,
+            "ndcg@10": 0.7508,
+            "mrr": 0.6926000000000001
+          },
+          "embed_time_sec": 1.8
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.7273000000000001,
+            "perfect_match@10": 0.7273000000000001,
+            "ndcg@10": 0.4844,
+            "mrr": 0.4172
+          },
+          "embed_time_sec": 11.0
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.6957,
+            "perfect_match@10": 0.6087,
+            "ndcg@10": 0.5617,
+            "mrr": 0.4844
+          },
+          "embed_time_sec": 21.9
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.8237000000000001,
+            "perfect_match@10": 0.8158,
+            "ndcg@10": 0.6092,
+            "mrr": 0.542
+          },
+          "embed_time_sec": 1.9
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.6631999999999999,
+            "perfect_match@10": 0.6315999999999999,
+            "ndcg@10": 0.4797,
+            "mrr": 0.40509999999999996
+          },
+          "embed_time_sec": 9.2
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.6437,
+            "perfect_match@10": 0.6322,
+            "ndcg@10": 0.4193,
+            "mrr": 0.3472
+          },
+          "embed_time_sec": 2.5
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.9506999999999999,
+            "perfect_match@10": 0.9458,
+            "ndcg@10": 0.8281000000000001,
+            "mrr": 0.7765000000000001
+          },
+          "embed_time_sec": 20.3
+        }
+      },
+      "overall": {
+        "coverage@10": 0.7698,
+        "perfect_match@10": 0.6968000000000001,
+        "ndcg@10": 0.6203,
+        "mrr": 0.5238
+      },
+      "embedding_times": {
+        "finance": 7.2,
+        "hotpot": 2.5,
+        "legal": 10.7,
+        "patent": 8.2,
+        "gugak": 19.9,
+        "hanhwa_insurance": 12.5,
+        "isu_system": 1.0,
+        "jacs": 29.8,
+        "mirae_asset": 1.8,
+        "ok_finance": 11.0,
+        "sejong": 21.9,
+        "skens": 1.9,
+        "sumitomo": 9.2,
+        "trans_cosmos": 2.5,
+        "yuhan_kimberly": 20.3
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "model_key": "vl-2b",
+      "precision": "nvfp4",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics": {
+            "coverage@10": 0.6665000000000001,
+            "perfect_match@10": 0.4155,
+            "ndcg@10": 0.5946,
+            "mrr": 0.4325
+          },
+          "embed_time_sec": 6.0
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics": {
+            "coverage@10": 0.8188,
+            "perfect_match@10": 0.6483,
+            "ndcg@10": 0.7943000000000001,
+            "mrr": 0.6222
+          },
+          "embed_time_sec": 2.2
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics": {
+            "coverage@10": 0.5871,
+            "perfect_match@10": 0.35369999999999996,
+            "ndcg@10": 0.4814,
+            "mrr": 0.34369999999999995
+          },
+          "embed_time_sec": 8.9
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics": {
+            "coverage@10": 0.7884,
+            "perfect_match@10": 0.575,
+            "ndcg@10": 0.7215,
+            "mrr": 0.5153
+          },
+          "embed_time_sec": 6.8
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics": {
+            "coverage@10": 0.7791,
+            "perfect_match@10": 0.7442,
+            "ndcg@10": 0.6735,
+            "mrr": 0.6324000000000001
+          },
+          "embed_time_sec": 16.8
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics": {
+            "coverage@10": 0.6038,
+            "perfect_match@10": 0.5628,
+            "ndcg@10": 0.4233,
+            "mrr": 0.3508
+          },
+          "embed_time_sec": 10.5
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics": {
+            "coverage@10": 0.8654000000000001,
+            "perfect_match@10": 0.8615,
+            "ndcg@10": 0.6764,
+            "mrr": 0.6177
+          },
+          "embed_time_sec": 0.9
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics": {
+            "coverage@10": 0.9062,
+            "perfect_match@10": 0.875,
+            "ndcg@10": 0.6779000000000001,
+            "mrr": 0.5847
+          },
+          "embed_time_sec": 24.8
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics": {
+            "coverage@10": 0.8752,
+            "perfect_match@10": 0.868,
+            "ndcg@10": 0.711,
+            "mrr": 0.6496999999999999
+          },
+          "embed_time_sec": 1.5
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics": {
+            "coverage@10": 0.6818000000000001,
+            "perfect_match@10": 0.6818000000000001,
+            "ndcg@10": 0.47340000000000004,
+            "mrr": 0.41200000000000003
+          },
+          "embed_time_sec": 9.5
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics": {
+            "coverage@10": 0.7391,
+            "perfect_match@10": 0.6087,
+            "ndcg@10": 0.5588000000000001,
+            "mrr": 0.4643
+          },
+          "embed_time_sec": 18.3
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics": {
+            "coverage@10": 0.7658,
+            "perfect_match@10": 0.7579,
+            "ndcg@10": 0.5766,
+            "mrr": 0.5193
+          },
+          "embed_time_sec": 1.5
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics": {
+            "coverage@10": 0.6368,
+            "perfect_match@10": 0.5895,
+            "ndcg@10": 0.4619,
+            "mrr": 0.3917
+          },
+          "embed_time_sec": 7.8
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics": {
+            "coverage@10": 0.5861999999999999,
+            "perfect_match@10": 0.5747,
+            "ndcg@10": 0.35979999999999995,
+            "mrr": 0.2919
+          },
+          "embed_time_sec": 2.1
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics": {
+            "coverage@10": 0.8916,
+            "perfect_match@10": 0.8916,
+            "ndcg@10": 0.76,
+            "mrr": 0.7103
+          },
+          "embed_time_sec": 17.0
+        }
+      },
+      "overall": {
+        "coverage@10": 0.7461,
+        "perfect_match@10": 0.6672,
+        "ndcg@10": 0.5963,
+        "mrr": 0.5025999999999999
+      },
+      "embedding_times": {
+        "finance": 6.0,
+        "hotpot": 2.2,
+        "legal": 8.9,
+        "patent": 6.8,
+        "gugak": 16.8,
+        "hanhwa_insurance": 10.5,
+        "isu_system": 0.9,
+        "jacs": 24.8,
+        "mirae_asset": 1.5,
+        "ok_finance": 9.5,
+        "sejong": 18.3,
+        "skens": 1.5,
+        "sumitomo": 7.8,
+        "trans_cosmos": 2.1,
+        "yuhan_kimberly": 17.0
+      }
+    }
+  ]
+}

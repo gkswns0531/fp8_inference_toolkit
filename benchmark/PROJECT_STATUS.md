@@ -53,6 +53,16 @@
 | Step 4 | BF16 vs FP8 vs NVFP4 리랭커 정합성 검증 | `reranker_accuracy_results.json` | FP8 전 모델 PASS, NVFP4 Qwen3 8B급 PASS / 소형 CAUTION / bge FAIL |
 | Step 5 | 통합 보고서 | [`RERANKER_BENCHMARK_REPORT.md`](./RERANKER_BENCHMARK_REPORT.md) | 완료 |
 
+## Client Retrieval Evaluation
+
+### Done
+
+| Task | Output | Note |
+|------|--------|------|
+| VL-8B BF16/FP8/NVFP4 × 15 데이터셋 검색 평가 | `retrieval_eval_results.json` | FP8 무손실(+0.15pp), NVFP4 -0.83pp |
+| VL-2B BF16/FP8/NVFP4 × 15 데이터셋 검색 평가 | `retrieval_eval_results.json` | FP8 -0.56pp, NVFP4 -2.93pp |
+| 통합 보고서 | [`RETRIEVAL_EVAL_REPORT.md`](../client_eval/RETRIEVAL_EVAL_REPORT.md) | 완료 |
+
 ## Methodology
 
 모든 레이턴시 벤치마크는 동일한 공정 비교 방법론을 사용한다:
@@ -100,4 +110,15 @@ benchmark/
 ├── benchmark_reranker_accuracy_bf16_fp8_fp4.py    ← 리랭커 정합성 검증
 ├── prepare_test_data.py                           ← 테스트 데이터 준비 스크립트
 └── test_data/                                     ← War and Peace 원본 + 토큰화 데이터
+
+client_eval/
+├── RETRIEVAL_EVAL_REPORT.md                       ← 실데이터 검색 평가 보고서
+├── run_retrieval_eval.py                          ← 검색 평가 스크립트
+└── results/
+    └── retrieval_eval_results.json                ← 2모델 × 3정밀도 × 15데이터셋 결과
+
+dataset/
+├── DATASET_GUIDE.md                               ← 데이터셋 가이드
+├── client/                                        ← 클라이언트 데이터셋 (11개)
+└── domain/                                        ← 도메인 데이터셋 (4개)
 ```
