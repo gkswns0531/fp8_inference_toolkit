@@ -3,7 +3,7 @@
 **Date**: 2026-03-03
 **GPU**: NVIDIA RTX PRO 6000 Blackwell Server Edition (96 GB)
 **Engine**: vLLM 0.16.0
-**Models**: Qwen3-VL-Embedding-8B, Qwen3-VL-Embedding-2B
+**Models**: Qwen3-VL-Embedding-8B, Qwen3-VL-Embedding-2B, Qwen3-VL-Reranker-8B
 
 ## Overview
 
@@ -264,12 +264,136 @@
 - **메트릭**: Group-based (gold_chunk_groups 기반) — 단일 청크가 아닌 정보 단위(group) 기준 평가
 - **양자화**: FP8 = `compressed-tensors` (FP8_DYNAMIC), NVFP4 = `compressed-tensors` (NVFP4, calibrated with ultrachat_200k)
 
-## 6. Files
+## 6. Reranker Evaluation — Qwen3-VL-Reranker-8B
+
+**Reranker**: Qwen3-VL-Reranker-8B (cross-encoder)
+**First-stage Embedder**: Qwen3-VL-Embedding-8B
+**Method**: Embedder top-K candidates → Reranker re-score → Evaluate top-10
+**Candidate pools (K)**: 16, 32, 64
+**All metrics**: @10 (top-10 기준)
+
+### 6.1 BF16 Embedder → Reranker
+
+#### 6.1.1 Overall Summary
+
+| Configuration | Cov@10 | Top@10 | NDCG@10 | MRR |
+|---------------|--------|--------|---------|-----|
+| **Embed-only @10** | **82.79%** | **75.87%** | **70.47%** | **60.22%** |
+| BF16 Reranker, cand=16 | 65.68% | 58.14% | 37.76% | 25.08% |
+| BF16 Reranker, cand=32 | 44.39% | 37.00% | 26.34% | 17.55% |
+| BF16 Reranker, cand=64 | 29.89% | 23.26% | 18.16% | 12.11% |
+| FP8 Reranker, cand=16 | 64.56% | 57.13% | 37.14% | 24.56% |
+| FP8 Reranker, cand=32 | 44.08% | 36.68% | 25.84% | 16.99% |
+| FP8 Reranker, cand=64 | 30.19% | 23.48% | 18.04% | 11.90% |
+| NVFP4 Reranker, cand=16 | 63.25% | 55.87% | 36.71% | 24.31% |
+| NVFP4 Reranker, cand=32 | 43.35% | 35.54% | 25.85% | 17.14% |
+| NVFP4 Reranker, cand=64 | 29.05% | 22.16% | 17.42% | 11.38% |
+
+#### 6.1.2 Per-Dataset — BF16 Reranker cand=16 vs Embed-only (Top@10 %)
+
+| Dataset | Embed-only | Reranker | Δ |
+|---------|-----------|----------|---|
+| finance | 47.29 | 44.65 | -2.64 |
+| hotpot | 80.81 | 61.48 | -19.33 |
+| legal | 39.17 | 26.78 | -12.39 |
+| patent | 62.71 | 61.25 | -1.46 |
+| gugak | 90.70 | 83.72 | -6.98 |
+| hanhwa_insurance | 75.41 | 50.82 | -24.59 |
+| isu_system | 94.62 | 66.15 | -28.47 |
+| jacs | 93.75 | 71.88 | -21.87 |
+| mirae_asset | 94.44 | 73.93 | -20.51 |
+| ok_finance | 63.64 | 36.36 | -27.28 |
+| sejong | 65.22 | 52.17 | -13.05 |
+| skens | 88.95 | 69.47 | -19.48 |
+| sumitomo | 73.68 | 60.00 | -13.68 |
+| trans_cosmos | 70.11 | 63.22 | -6.89 |
+| yuhan_kimberly | 97.54 | 50.25 | **-47.29** |
+
+### 6.2 NVFP4 Embedder → Reranker
+
+#### 6.2.1 Overall Summary
+
+| Configuration | Cov@10 | Top@10 | NDCG@10 | MRR |
+|---------------|--------|--------|---------|-----|
+| **Embed-only @10** | **81.60%** | **74.66%** | **68.71%** | **58.35%** |
+| BF16 Reranker, cand=16 | 65.24% | 58.01% | 37.59% | 25.03% |
+| BF16 Reranker, cand=32 | 44.79% | 37.43% | 26.57% | 17.74% |
+| BF16 Reranker, cand=64 | 30.26% | 23.74% | 18.28% | 12.17% |
+| FP8 Reranker, cand=16 | 64.71% | 57.50% | 36.93% | 24.30% |
+| FP8 Reranker, cand=32 | 44.46% | 37.07% | 26.19% | 17.35% |
+| FP8 Reranker, cand=64 | 29.92% | 23.46% | 17.93% | 11.84% |
+| NVFP4 Reranker, cand=16 | 63.16% | 55.63% | 36.19% | 23.75% |
+| NVFP4 Reranker, cand=32 | 42.92% | 35.14% | 25.48% | 16.85% |
+| NVFP4 Reranker, cand=64 | 29.63% | 22.93% | 17.35% | 11.14% |
+
+### 6.3 Embedder Precision 비교 (BF16 vs NVFP4)
+
+| Reranker | Cand | BF16 Emb Cov@10 | NVFP4 Emb Cov@10 | Δ |
+|----------|------|-----------------|-------------------|---|
+| BF16 | 16 | 65.68% | 65.24% | -0.44 |
+| BF16 | 32 | 44.39% | 44.79% | +0.40 |
+| BF16 | 64 | 29.89% | 30.26% | +0.37 |
+| FP8 | 16 | 64.56% | 64.71% | +0.15 |
+| FP8 | 32 | 44.08% | 44.46% | +0.38 |
+| FP8 | 64 | 30.19% | 29.92% | -0.27 |
+| NVFP4 | 16 | 63.25% | 63.16% | -0.09 |
+| NVFP4 | 32 | 43.35% | 42.92% | -0.43 |
+| NVFP4 | 64 | 29.05% | 29.63% | +0.58 |
+
+임베더 정밀도(BF16 vs NVFP4)에 따른 리랭커 성능 차이는 ±0.6pp 이내로 사실상 무시 가능.
+
+### 6.4 Reranker Quantization 비교
+
+| Cand | BF16 Cov@10 | FP8 Cov@10 | Δ FP8 | NVFP4 Cov@10 | Δ NVFP4 |
+|------|-------------|------------|-------|--------------|---------|
+| 16 | 65.68% | 64.56% | -1.12 | 63.25% | -2.43 |
+| 32 | 44.39% | 44.08% | -0.31 | 43.35% | -1.04 |
+| 64 | 29.89% | 30.19% | +0.30 | 29.05% | -0.84 |
+
+(BF16 임베더 기준) FP8 리랭커 열화: ≤1.1pp, NVFP4 리랭커 열화: ≤2.4pp.
+리랭커 자체 양자화 민감도는 낮으나, 리랭커 성능 자체가 embed-only보다 현저히 낮아 실용적 의미 제한적.
+
+### 6.5 Key Findings
+
+#### 리랭커는 검색 품질을 크게 저하시킴
+
+- **Embed-only 대비 -17~53pp 하락** (Top@10 기준, 데이터셋별)
+- 최선의 경우(cand=16): embed-only 82.79% → reranker 65.68% (**-17.11pp**)
+- 최악의 경우(cand=64): embed-only 82.79% → reranker 29.89% (**-52.90pp**)
+- 15개 데이터셋 전부에서 리랭커가 embed-only보다 하위 성능
+
+#### Candidate pool이 작을수록 성능이 높음
+
+- cand=16 > cand=32 > cand=64 (일관된 패턴)
+- 리랭커가 후보를 잘못 재순위화하므로, 더 많은 후보를 주면 오히려 성능이 하락
+- 이는 리랭커의 scoring이 데이터셋 특성과 맞지 않음을 의미
+
+#### 리랭커 양자화 영향은 미미
+
+- BF16 → FP8: ≤1.1pp 하락 (실용적 무시 가능)
+- BF16 → NVFP4: ≤2.4pp 하락
+- 리랭커 자체의 양자화는 문제가 아님
+
+#### 임베더 정밀도는 리랭커 성능에 영향 없음
+
+- BF16 임베더 vs NVFP4 임베더: ±0.6pp 이내
+- 1차 검색 후보의 품질 차이가 리랭커 결과에 전달되지 않음
+
+#### 결론
+
+Qwen3-VL-Reranker-8B는 현재 평가 데이터셋에서 **사용하지 않는 것이 최선**. Bi-encoder 임베딩만으로 충분히 높은 성능을 달성하며, cross-encoder 리랭킹 추가 시 오히려 성능이 크게 하락함. 이는 모델의 cross-encoder scoring이 한국어/일본어/특수 도메인 데이터에 대해 적절하게 학습되지 않았을 가능성을 시사함.
+
+---
+
+## 7. Files
 
 | File | Description |
 |------|-------------|
-| `client_eval/run_retrieval_eval.py` | 평가 스크립트 |
-| `client_eval/results/retrieval_eval_results.json` | 전체 결과 (2모델 × 3정밀도 × 15데이터셋) |
+| `client_eval/run_retrieval_eval.py` | 임베딩 평가 스크립트 |
+| `client_eval/run_reranker_eval.py` | 리랭커 평가 스크립트 |
+| `client_eval/results/retrieval_eval_results.json` | 임베딩 결과 (2모델 × 3정밀도 × 15데이터셋) |
+| `client_eval/results/reranker_eval_results_bf16.json` | 리랭커 결과 (BF16 임베더) |
+| `client_eval/results/reranker_eval_results_nvfp4.json` | 리랭커 결과 (NVFP4 임베더) |
 | `client_eval/RETRIEVAL_EVAL_REPORT.md` | 이 보고서 |
 | `dataset/DATASET_GUIDE.md` | 데이터셋 가이드 |
 | `dataset/client/*.json` | 클라이언트 데이터셋 (11개) |

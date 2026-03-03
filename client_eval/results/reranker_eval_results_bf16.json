@@ -1,0 +1,1392 @@
+{
+  "timestamp": "2026-03-03 19:29:50",
+  "embedder": "Qwen/Qwen3-VL-Embedding-8B",
+  "embedder_precision": "bf16",
+  "reranker": "Qwen/Qwen3-VL-Reranker-8B",
+  "candidate_ks": [
+    16,
+    32,
+    64
+  ],
+  "eval_top_k": 10,
+  "embed_only": {
+    "per_dataset": {
+      "finance": {
+        "num_queries": 645,
+        "num_corpus": 3281,
+        "metrics": {
+          "coverage": 0.716279,
+          "perfect_match": 0.472868,
+          "ndcg": 0.642394,
+          "mrr": 0.455936
+        },
+        "embed_time_sec": 45.3
+      },
+      "hotpot": {
+        "num_queries": 688,
+        "num_corpus": 3218,
+        "metrics": {
+          "coverage": 0.904918,
+          "perfect_match": 0.80814,
+          "ndcg": 0.894865,
+          "mrr": 0.683938
+        },
+        "embed_time_sec": 14.8
+      },
+      "legal": {
+        "num_queries": 605,
+        "num_corpus": 4090,
+        "metrics": {
+          "coverage": 0.643939,
+          "perfect_match": 0.391736,
+          "ndcg": 0.548684,
+          "mrr": 0.383881
+        },
+        "embed_time_sec": 69.4
+      },
+      "patent": {
+        "num_queries": 480,
+        "num_corpus": 3339,
+        "metrics": {
+          "coverage": 0.816319,
+          "perfect_match": 0.627083,
+          "ndcg": 0.762719,
+          "mrr": 0.540771
+        },
+        "embed_time_sec": 52.7
+      },
+      "gugak": {
+        "num_queries": 43,
+        "num_corpus": 1023,
+        "metrics": {
+          "coverage": 0.930233,
+          "perfect_match": 0.906977,
+          "ndcg": 0.794045,
+          "mrr": 0.729037
+        },
+        "embed_time_sec": 119.0
+      },
+      "hanhwa_insurance": {
+        "num_queries": 183,
+        "num_corpus": 1615,
+        "metrics": {
+          "coverage": 0.79235,
+          "perfect_match": 0.754098,
+          "ndcg": 0.590604,
+          "mrr": 0.49055
+        },
+        "embed_time_sec": 77.5
+      },
+      "isu_system": {
+        "num_queries": 130,
+        "num_corpus": 219,
+        "metrics": {
+          "coverage": 0.946154,
+          "perfect_match": 0.946154,
+          "ndcg": 0.809575,
+          "mrr": 0.760479
+        },
+        "embed_time_sec": 6.4
+      },
+      "jacs": {
+        "num_queries": 32,
+        "num_corpus": 5599,
+        "metrics": {
+          "coverage": 0.9375,
+          "perfect_match": 0.9375,
+          "ndcg": 0.845518,
+          "mrr": 0.778646
+        },
+        "embed_time_sec": 189.8
+      },
+      "mirae_asset": {
+        "num_queries": 629,
+        "num_corpus": 374,
+        "metrics": {
+          "coverage": 0.949921,
+          "perfect_match": 0.944356,
+          "ndcg": 0.826845,
+          "mrr": 0.770535
+        },
+        "embed_time_sec": 10.8
+      },
+      "ok_finance": {
+        "num_queries": 22,
+        "num_corpus": 781,
+        "metrics": {
+          "coverage": 0.636364,
+          "perfect_match": 0.636364,
+          "ndcg": 0.482926,
+          "mrr": 0.435606
+        },
+        "embed_time_sec": 62.9
+      },
+      "sejong": {
+        "num_queries": 23,
+        "num_corpus": 5753,
+        "metrics": {
+          "coverage": 0.782609,
+          "perfect_match": 0.652174,
+          "ndcg": 0.688004,
+          "mrr": 0.607609
+        },
+        "embed_time_sec": 138.9
+      },
+      "skens": {
+        "num_queries": 190,
+        "num_corpus": 626,
+        "metrics": {
+          "coverage": 0.894737,
+          "perfect_match": 0.889474,
+          "ndcg": 0.742223,
+          "mrr": 0.68516
+        },
+        "embed_time_sec": 11.7
+      },
+      "sumitomo": {
+        "num_queries": 95,
+        "num_corpus": 2427,
+        "metrics": {
+          "coverage": 0.768421,
+          "perfect_match": 0.736842,
+          "ndcg": 0.548728,
+          "mrr": 0.450292
+        },
+        "embed_time_sec": 56.5
+      },
+      "trans_cosmos": {
+        "num_queries": 87,
+        "num_corpus": 267,
+        "metrics": {
+          "coverage": 0.718391,
+          "perfect_match": 0.701149,
+          "ndcg": 0.512127,
+          "mrr": 0.426624
+        },
+        "embed_time_sec": 14.7
+      },
+      "yuhan_kimberly": {
+        "num_queries": 203,
+        "num_corpus": 2015,
+        "metrics": {
+          "coverage": 0.980296,
+          "perfect_match": 0.975369,
+          "ndcg": 0.881171,
+          "mrr": 0.833951
+        },
+        "embed_time_sec": 125.7
+      }
+    },
+    "overall": {
+      "coverage": 0.827895,
+      "perfect_match": 0.758686,
+      "ndcg": 0.704695,
+      "mrr": 0.602201
+    }
+  },
+  "results": [
+    {
+      "reranker": "Qwen/Qwen3-VL-Reranker-8B",
+      "precision": "bf16",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.684625,
+              "perfect_match": 0.446512,
+              "ndcg": 0.514961,
+              "mrr": 0.331221
+            },
+            "32": {
+              "coverage": 0.589793,
+              "perfect_match": 0.341085,
+              "ndcg": 0.414283,
+              "mrr": 0.25286
+            },
+            "64": {
+              "coverage": 0.457235,
+              "perfect_match": 0.244961,
+              "ndcg": 0.3014,
+              "mrr": 0.177673
+            }
+          },
+          "rerank_time_sec": 601.6
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.797238,
+              "perfect_match": 0.614826,
+              "ndcg": 0.634781,
+              "mrr": 0.440332
+            },
+            "32": {
+              "coverage": 0.654433,
+              "perfect_match": 0.428779,
+              "ndcg": 0.51726,
+              "mrr": 0.360213
+            },
+            "64": {
+              "coverage": 0.54845,
+              "perfect_match": 0.332849,
+              "ndcg": 0.41558,
+              "mrr": 0.285367
+            }
+          },
+          "rerank_time_sec": 224.5
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.511708,
+              "perfect_match": 0.267769,
+              "ndcg": 0.301554,
+              "mrr": 0.158032
+            },
+            "32": {
+              "coverage": 0.339669,
+              "perfect_match": 0.158678,
+              "ndcg": 0.200647,
+              "mrr": 0.103308
+            },
+            "64": {
+              "coverage": 0.217493,
+              "perfect_match": 0.079339,
+              "ndcg": 0.126,
+              "mrr": 0.062152
+            }
+          },
+          "rerank_time_sec": 690.9
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.799653,
+              "perfect_match": 0.6125,
+              "ndcg": 0.651667,
+              "mrr": 0.425719
+            },
+            "32": {
+              "coverage": 0.702431,
+              "perfect_match": 0.485417,
+              "ndcg": 0.575978,
+              "mrr": 0.376305
+            },
+            "64": {
+              "coverage": 0.592361,
+              "perfect_match": 0.383333,
+              "ndcg": 0.484516,
+              "mrr": 0.314555
+            }
+          },
+          "rerank_time_sec": 497.5
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.837209,
+              "perfect_match": 0.837209,
+              "ndcg": 0.39193,
+              "mrr": 0.247158
+            },
+            "32": {
+              "coverage": 0.546512,
+              "perfect_match": 0.534884,
+              "ndcg": 0.244519,
+              "mrr": 0.146982
+            },
+            "64": {
+              "coverage": 0.302326,
+              "perfect_match": 0.255814,
+              "ndcg": 0.127945,
+              "mrr": 0.073025
+            }
+          },
+          "rerank_time_sec": 340.8
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.557377,
+              "perfect_match": 0.508197,
+              "ndcg": 0.27344,
+              "mrr": 0.169349
+            },
+            "32": {
+              "coverage": 0.336066,
+              "perfect_match": 0.273224,
+              "ndcg": 0.167763,
+              "mrr": 0.106054
+            },
+            "64": {
+              "coverage": 0.188525,
+              "perfect_match": 0.153005,
+              "ndcg": 0.091434,
+              "mrr": 0.056268
+            }
+          },
+          "rerank_time_sec": 718.5
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.661538,
+              "perfect_match": 0.661538,
+              "ndcg": 0.350256,
+              "mrr": 0.255522
+            },
+            "32": {
+              "coverage": 0.461538,
+              "perfect_match": 0.461538,
+              "ndcg": 0.243686,
+              "mrr": 0.176502
+            },
+            "64": {
+              "coverage": 0.319231,
+              "perfect_match": 0.315385,
+              "ndcg": 0.166764,
+              "mrr": 0.119423
+            }
+          },
+          "rerank_time_sec": 262.1
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.765625,
+              "perfect_match": 0.71875,
+              "ndcg": 0.342416,
+              "mrr": 0.208271
+            },
+            "32": {
+              "coverage": 0.359375,
+              "perfect_match": 0.34375,
+              "ndcg": 0.158947,
+              "mrr": 0.098127
+            },
+            "64": {
+              "coverage": 0.21875,
+              "perfect_match": 0.21875,
+              "ndcg": 0.117,
+              "mrr": 0.085751
+            }
+          },
+          "rerank_time_sec": 113.7
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.753577,
+              "perfect_match": 0.739269,
+              "ndcg": 0.392295,
+              "mrr": 0.275563
+            },
+            "32": {
+              "coverage": 0.50159,
+              "perfect_match": 0.484897,
+              "ndcg": 0.239145,
+              "mrr": 0.156562
+            },
+            "64": {
+              "coverage": 0.306836,
+              "perfect_match": 0.292528,
+              "ndcg": 0.134867,
+              "mrr": 0.081625
+            }
+          },
+          "rerank_time_sec": 1314.2
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.363636,
+              "perfect_match": 0.363636,
+              "ndcg": 0.188326,
+              "mrr": 0.138059
+            },
+            "32": {
+              "coverage": 0.227273,
+              "perfect_match": 0.227273,
+              "ndcg": 0.168287,
+              "mrr": 0.151136
+            },
+            "64": {
+              "coverage": 0.181818,
+              "perfect_match": 0.181818,
+              "ndcg": 0.133271,
+              "mrr": 0.118687
+            }
+          },
+          "rerank_time_sec": 89.5
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.586957,
+              "perfect_match": 0.521739,
+              "ndcg": 0.290902,
+              "mrr": 0.187043
+            },
+            "32": {
+              "coverage": 0.23913,
+              "perfect_match": 0.217391,
+              "ndcg": 0.145931,
+              "mrr": 0.107143
+            },
+            "64": {
+              "coverage": 0.108696,
+              "perfect_match": 0.086957,
+              "ndcg": 0.081522,
+              "mrr": 0.065217
+            }
+          },
+          "rerank_time_sec": 56.5
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.702632,
+              "perfect_match": 0.694737,
+              "ndcg": 0.366033,
+              "mrr": 0.259756
+            },
+            "32": {
+              "coverage": 0.455263,
+              "perfect_match": 0.436842,
+              "ndcg": 0.221107,
+              "mrr": 0.147277
+            },
+            "64": {
+              "coverage": 0.286842,
+              "perfect_match": 0.273684,
+              "ndcg": 0.138797,
+              "mrr": 0.091906
+            }
+          },
+          "rerank_time_sec": 233.6
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.647368,
+              "perfect_match": 0.6,
+              "ndcg": 0.347664,
+              "mrr": 0.236211
+            },
+            "32": {
+              "coverage": 0.478947,
+              "perfect_match": 0.431579,
+              "ndcg": 0.269071,
+              "mrr": 0.190251
+            },
+            "64": {
+              "coverage": 0.278947,
+              "perfect_match": 0.231579,
+              "ndcg": 0.17261,
+              "mrr": 0.130516
+            }
+          },
+          "rerank_time_sec": 201.7
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.66092,
+              "perfect_match": 0.632184,
+              "ndcg": 0.321773,
+              "mrr": 0.206862
+            },
+            "32": {
+              "coverage": 0.436782,
+              "perfect_match": 0.413793,
+              "ndcg": 0.185125,
+              "mrr": 0.105608
+            },
+            "64": {
+              "coverage": 0.224138,
+              "perfect_match": 0.206897,
+              "ndcg": 0.085683,
+              "mrr": 0.043455
+            }
+          },
+          "rerank_time_sec": 431.0
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.522167,
+              "perfect_match": 0.502463,
+              "ndcg": 0.296697,
+              "mrr": 0.22267
+            },
+            "32": {
+              "coverage": 0.330049,
+              "perfect_match": 0.310345,
+              "ndcg": 0.198938,
+              "mrr": 0.154322
+            },
+            "64": {
+              "coverage": 0.251232,
+              "perfect_match": 0.231527,
+              "ndcg": 0.146057,
+              "mrr": 0.110808
+            }
+          },
+          "rerank_time_sec": 737.4
+        }
+      },
+      "overall_by_cand_k": {
+        "16": {
+          "coverage": 0.656815,
+          "perfect_match": 0.581422,
+          "ndcg": 0.377646,
+          "mrr": 0.250785
+        },
+        "32": {
+          "coverage": 0.443923,
+          "perfect_match": 0.369965,
+          "ndcg": 0.263379,
+          "mrr": 0.17551
+        },
+        "64": {
+          "coverage": 0.298859,
+          "perfect_match": 0.232562,
+          "ndcg": 0.181563,
+          "mrr": 0.121095
+        }
+      }
+    },
+    {
+      "reranker": "Qwen/Qwen3-VL-Reranker-8B",
+      "precision": "fp8",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.686176,
+              "perfect_match": 0.451163,
+              "ndcg": 0.523186,
+              "mrr": 0.339146
+            },
+            "32": {
+              "coverage": 0.589793,
+              "perfect_match": 0.350388,
+              "ndcg": 0.418892,
+              "mrr": 0.257223
+            },
+            "64": {
+              "coverage": 0.464341,
+              "perfect_match": 0.251163,
+              "ndcg": 0.303203,
+              "mrr": 0.176152
+            }
+          },
+          "rerank_time_sec": 372.5
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.805111,
+              "perfect_match": 0.625,
+              "ndcg": 0.629714,
+              "mrr": 0.432396
+            },
+            "32": {
+              "coverage": 0.647529,
+              "perfect_match": 0.415698,
+              "ndcg": 0.509111,
+              "mrr": 0.353658
+            },
+            "64": {
+              "coverage": 0.541061,
+              "perfect_match": 0.327035,
+              "ndcg": 0.408607,
+              "mrr": 0.280649
+            }
+          },
+          "rerank_time_sec": 139.1
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.504821,
+              "perfect_match": 0.264463,
+              "ndcg": 0.299612,
+              "mrr": 0.157166
+            },
+            "32": {
+              "coverage": 0.342975,
+              "perfect_match": 0.161983,
+              "ndcg": 0.202573,
+              "mrr": 0.104414
+            },
+            "64": {
+              "coverage": 0.225069,
+              "perfect_match": 0.089256,
+              "ndcg": 0.128016,
+              "mrr": 0.0621
+            }
+          },
+          "rerank_time_sec": 428.2
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.793403,
+              "perfect_match": 0.604167,
+              "ndcg": 0.646375,
+              "mrr": 0.422154
+            },
+            "32": {
+              "coverage": 0.697743,
+              "perfect_match": 0.489583,
+              "ndcg": 0.569488,
+              "mrr": 0.369908
+            },
+            "64": {
+              "coverage": 0.6,
+              "perfect_match": 0.389583,
+              "ndcg": 0.483033,
+              "mrr": 0.311559
+            }
+          },
+          "rerank_time_sec": 309.7
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.813953,
+              "perfect_match": 0.813953,
+              "ndcg": 0.367462,
+              "mrr": 0.221627
+            },
+            "32": {
+              "coverage": 0.511628,
+              "perfect_match": 0.488372,
+              "ndcg": 0.221322,
+              "mrr": 0.127427
+            },
+            "64": {
+              "coverage": 0.290698,
+              "perfect_match": 0.255814,
+              "ndcg": 0.120707,
+              "mrr": 0.068245
+            }
+          },
+          "rerank_time_sec": 220.8
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.54918,
+              "perfect_match": 0.497268,
+              "ndcg": 0.260578,
+              "mrr": 0.155416
+            },
+            "32": {
+              "coverage": 0.319672,
+              "perfect_match": 0.262295,
+              "ndcg": 0.156594,
+              "mrr": 0.096951
+            },
+            "64": {
+              "coverage": 0.180328,
+              "perfect_match": 0.142077,
+              "ndcg": 0.090403,
+              "mrr": 0.056782
+            }
+          },
+          "rerank_time_sec": 456.2
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.665385,
+              "perfect_match": 0.661538,
+              "ndcg": 0.35101,
+              "mrr": 0.254997
+            },
+            "32": {
+              "coverage": 0.45,
+              "perfect_match": 0.446154,
+              "ndcg": 0.236796,
+              "mrr": 0.170665
+            },
+            "64": {
+              "coverage": 0.319231,
+              "perfect_match": 0.315385,
+              "ndcg": 0.170033,
+              "mrr": 0.124032
+            }
+          },
+          "rerank_time_sec": 163.2
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.71875,
+              "perfect_match": 0.6875,
+              "ndcg": 0.328798,
+              "mrr": 0.202288
+            },
+            "32": {
+              "coverage": 0.359375,
+              "perfect_match": 0.34375,
+              "ndcg": 0.156543,
+              "mrr": 0.095263
+            },
+            "64": {
+              "coverage": 0.21875,
+              "perfect_match": 0.21875,
+              "ndcg": 0.11208,
+              "mrr": 0.080246
+            }
+          },
+          "rerank_time_sec": 72.5
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.745628,
+              "perfect_match": 0.73132,
+              "ndcg": 0.383619,
+              "mrr": 0.266791
+            },
+            "32": {
+              "coverage": 0.490461,
+              "perfect_match": 0.475358,
+              "ndcg": 0.230671,
+              "mrr": 0.148853
+            },
+            "64": {
+              "coverage": 0.32035,
+              "perfect_match": 0.308426,
+              "ndcg": 0.136186,
+              "mrr": 0.080359
+            }
+          },
+          "rerank_time_sec": 825.2
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.363636,
+              "perfect_match": 0.363636,
+              "ndcg": 0.184766,
+              "mrr": 0.133586
+            },
+            "32": {
+              "coverage": 0.272727,
+              "perfect_match": 0.272727,
+              "ndcg": 0.163258,
+              "mrr": 0.131439
+            },
+            "64": {
+              "coverage": 0.136364,
+              "perfect_match": 0.136364,
+              "ndcg": 0.110485,
+              "mrr": 0.102273
+            }
+          },
+          "rerank_time_sec": 58.0
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.5,
+              "perfect_match": 0.434783,
+              "ndcg": 0.283057,
+              "mrr": 0.199362
+            },
+            "32": {
+              "coverage": 0.282609,
+              "perfect_match": 0.26087,
+              "ndcg": 0.166569,
+              "mrr": 0.119893
+            },
+            "64": {
+              "coverage": 0.173913,
+              "perfect_match": 0.130435,
+              "ndcg": 0.101796,
+              "mrr": 0.071739
+            }
+          },
+          "rerank_time_sec": 35.9
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.713158,
+              "perfect_match": 0.705263,
+              "ndcg": 0.362695,
+              "mrr": 0.252254
+            },
+            "32": {
+              "coverage": 0.45,
+              "perfect_match": 0.431579,
+              "ndcg": 0.209542,
+              "mrr": 0.133649
+            },
+            "64": {
+              "coverage": 0.302632,
+              "perfect_match": 0.289474,
+              "ndcg": 0.136779,
+              "mrr": 0.085911
+            }
+          },
+          "rerank_time_sec": 142.7
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.631579,
+              "perfect_match": 0.589474,
+              "ndcg": 0.350053,
+              "mrr": 0.24119
+            },
+            "32": {
+              "coverage": 0.510526,
+              "perfect_match": 0.463158,
+              "ndcg": 0.283128,
+              "mrr": 0.196366
+            },
+            "64": {
+              "coverage": 0.336842,
+              "perfect_match": 0.284211,
+              "ndcg": 0.193333,
+              "mrr": 0.138674
+            }
+          },
+          "rerank_time_sec": 128.7
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.666667,
+              "perfect_match": 0.632184,
+              "ndcg": 0.314974,
+              "mrr": 0.198515
+            },
+            "32": {
+              "coverage": 0.373563,
+              "perfect_match": 0.344828,
+              "ndcg": 0.167162,
+              "mrr": 0.100431
+            },
+            "64": {
+              "coverage": 0.189655,
+              "perfect_match": 0.172414,
+              "ndcg": 0.08197,
+              "mrr": 0.048846
+            }
+          },
+          "rerank_time_sec": 278.5
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.527094,
+              "perfect_match": 0.507389,
+              "ndcg": 0.285051,
+              "mrr": 0.206864
+            },
+            "32": {
+              "coverage": 0.312808,
+              "perfect_match": 0.295567,
+              "ndcg": 0.184804,
+              "mrr": 0.142097
+            },
+            "64": {
+              "coverage": 0.229064,
+              "perfect_match": 0.211823,
+              "ndcg": 0.130062,
+              "mrr": 0.097302
+            }
+          },
+          "rerank_time_sec": 462.3
+        }
+      },
+      "overall_by_cand_k": {
+        "16": {
+          "coverage": 0.645636,
+          "perfect_match": 0.571273,
+          "ndcg": 0.371397,
+          "mrr": 0.245583
+        },
+        "32": {
+          "coverage": 0.440761,
+          "perfect_match": 0.366821,
+          "ndcg": 0.25843,
+          "mrr": 0.169882
+        },
+        "64": {
+          "coverage": 0.301887,
+          "perfect_match": 0.234814,
+          "ndcg": 0.180446,
+          "mrr": 0.118991
+        }
+      }
+    },
+    {
+      "reranker": "Qwen/Qwen3-VL-Reranker-8B",
+      "precision": "nvfp4",
+      "per_dataset": {
+        "finance": {
+          "num_queries": 645,
+          "num_corpus": 3281,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.678553,
+              "perfect_match": 0.437209,
+              "ndcg": 0.516502,
+              "mrr": 0.332723
+            },
+            "32": {
+              "coverage": 0.592377,
+              "perfect_match": 0.35814,
+              "ndcg": 0.419785,
+              "mrr": 0.256798
+            },
+            "64": {
+              "coverage": 0.465762,
+              "perfect_match": 0.257364,
+              "ndcg": 0.3079,
+              "mrr": 0.180898
+            }
+          },
+          "rerank_time_sec": 235.0
+        },
+        "hotpot": {
+          "num_queries": 688,
+          "num_corpus": 3218,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.802568,
+              "perfect_match": 0.614826,
+              "ndcg": 0.629926,
+              "mrr": 0.428854
+            },
+            "32": {
+              "coverage": 0.662791,
+              "perfect_match": 0.4375,
+              "ndcg": 0.518605,
+              "mrr": 0.353389
+            },
+            "64": {
+              "coverage": 0.542999,
+              "perfect_match": 0.318314,
+              "ndcg": 0.413809,
+              "mrr": 0.279819
+            }
+          },
+          "rerank_time_sec": 88.7
+        },
+        "legal": {
+          "num_queries": 605,
+          "num_corpus": 4090,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.518457,
+              "perfect_match": 0.284298,
+              "ndcg": 0.303552,
+              "mrr": 0.158791
+            },
+            "32": {
+              "coverage": 0.338567,
+              "perfect_match": 0.150413,
+              "ndcg": 0.199507,
+              "mrr": 0.103306
+            },
+            "64": {
+              "coverage": 0.211019,
+              "perfect_match": 0.080992,
+              "ndcg": 0.121294,
+              "mrr": 0.060269
+            }
+          },
+          "rerank_time_sec": 268.8
+        },
+        "patent": {
+          "num_queries": 480,
+          "num_corpus": 3339,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.804688,
+              "perfect_match": 0.616667,
+              "ndcg": 0.666717,
+              "mrr": 0.440669
+            },
+            "32": {
+              "coverage": 0.703299,
+              "perfect_match": 0.49375,
+              "ndcg": 0.58646,
+              "mrr": 0.385109
+            },
+            "64": {
+              "coverage": 0.597569,
+              "perfect_match": 0.379167,
+              "ndcg": 0.493048,
+              "mrr": 0.321601
+            }
+          },
+          "rerank_time_sec": 194.9
+        },
+        "gugak": {
+          "num_queries": 43,
+          "num_corpus": 1023,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.569767,
+              "perfect_match": 0.534884,
+              "ndcg": 0.282389,
+              "mrr": 0.184621
+            },
+            "32": {
+              "coverage": 0.383721,
+              "perfect_match": 0.348837,
+              "ndcg": 0.170714,
+              "mrr": 0.098247
+            },
+            "64": {
+              "coverage": 0.22093,
+              "perfect_match": 0.186047,
+              "ndcg": 0.085711,
+              "mrr": 0.04247
+            }
+          },
+          "rerank_time_sec": 147.1
+        },
+        "hanhwa_insurance": {
+          "num_queries": 183,
+          "num_corpus": 1615,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.538251,
+              "perfect_match": 0.497268,
+              "ndcg": 0.259743,
+              "mrr": 0.156429
+            },
+            "32": {
+              "coverage": 0.349727,
+              "perfect_match": 0.289617,
+              "ndcg": 0.156038,
+              "mrr": 0.08919
+            },
+            "64": {
+              "coverage": 0.18306,
+              "perfect_match": 0.153005,
+              "ndcg": 0.08672,
+              "mrr": 0.051993
+            }
+          },
+          "rerank_time_sec": 298.2
+        },
+        "isu_system": {
+          "num_queries": 130,
+          "num_corpus": 219,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.584615,
+              "perfect_match": 0.584615,
+              "ndcg": 0.305787,
+              "mrr": 0.221389
+            },
+            "32": {
+              "coverage": 0.369231,
+              "perfect_match": 0.369231,
+              "ndcg": 0.209272,
+              "mrr": 0.160893
+            },
+            "64": {
+              "coverage": 0.257692,
+              "perfect_match": 0.253846,
+              "ndcg": 0.144733,
+              "mrr": 0.110061
+            }
+          },
+          "rerank_time_sec": 103.6
+        },
+        "jacs": {
+          "num_queries": 32,
+          "num_corpus": 5599,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.734375,
+              "perfect_match": 0.71875,
+              "ndcg": 0.314574,
+              "mrr": 0.182887
+            },
+            "32": {
+              "coverage": 0.40625,
+              "perfect_match": 0.375,
+              "ndcg": 0.170393,
+              "mrr": 0.099169
+            },
+            "64": {
+              "coverage": 0.15625,
+              "perfect_match": 0.125,
+              "ndcg": 0.086452,
+              "mrr": 0.062674
+            }
+          },
+          "rerank_time_sec": 47.3
+        },
+        "mirae_asset": {
+          "num_queries": 629,
+          "num_corpus": 374,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.730525,
+              "perfect_match": 0.709062,
+              "ndcg": 0.380508,
+              "mrr": 0.267602
+            },
+            "32": {
+              "coverage": 0.465819,
+              "perfect_match": 0.4531,
+              "ndcg": 0.228505,
+              "mrr": 0.152235
+            },
+            "64": {
+              "coverage": 0.298887,
+              "perfect_match": 0.289348,
+              "ndcg": 0.133943,
+              "mrr": 0.082166
+            }
+          },
+          "rerank_time_sec": 536.6
+        },
+        "ok_finance": {
+          "num_queries": 22,
+          "num_corpus": 781,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.409091,
+              "perfect_match": 0.409091,
+              "ndcg": 0.25881,
+              "mrr": 0.213384
+            },
+            "32": {
+              "coverage": 0.318182,
+              "perfect_match": 0.318182,
+              "ndcg": 0.226103,
+              "mrr": 0.19697
+            },
+            "64": {
+              "coverage": 0.318182,
+              "perfect_match": 0.318182,
+              "ndcg": 0.175839,
+              "mrr": 0.131061
+            }
+          },
+          "rerank_time_sec": 39.4
+        },
+        "sejong": {
+          "num_queries": 23,
+          "num_corpus": 5753,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.630435,
+              "perfect_match": 0.565217,
+              "ndcg": 0.319314,
+              "mrr": 0.200871
+            },
+            "32": {
+              "coverage": 0.282609,
+              "perfect_match": 0.26087,
+              "ndcg": 0.154351,
+              "mrr": 0.102355
+            },
+            "64": {
+              "coverage": 0.173913,
+              "perfect_match": 0.130435,
+              "ndcg": 0.073342,
+              "mrr": 0.037888
+            }
+          },
+          "rerank_time_sec": 23.6
+        },
+        "skens": {
+          "num_queries": 190,
+          "num_corpus": 626,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.692105,
+              "perfect_match": 0.684211,
+              "ndcg": 0.337478,
+              "mrr": 0.226393
+            },
+            "32": {
+              "coverage": 0.423684,
+              "perfect_match": 0.405263,
+              "ndcg": 0.196342,
+              "mrr": 0.125044
+            },
+            "64": {
+              "coverage": 0.278947,
+              "perfect_match": 0.263158,
+              "ndcg": 0.11783,
+              "mrr": 0.068317
+            }
+          },
+          "rerank_time_sec": 90.2
+        },
+        "sumitomo": {
+          "num_queries": 95,
+          "num_corpus": 2427,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.631579,
+              "perfect_match": 0.6,
+              "ndcg": 0.326068,
+              "mrr": 0.213759
+            },
+            "32": {
+              "coverage": 0.484211,
+              "perfect_match": 0.410526,
+              "ndcg": 0.252434,
+              "mrr": 0.16976
+            },
+            "64": {
+              "coverage": 0.221053,
+              "perfect_match": 0.178947,
+              "ndcg": 0.142187,
+              "mrr": 0.113425
+            }
+          },
+          "rerank_time_sec": 85.2
+        },
+        "trans_cosmos": {
+          "num_queries": 87,
+          "num_corpus": 267,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.614943,
+              "perfect_match": 0.597701,
+              "ndcg": 0.293005,
+              "mrr": 0.183787
+            },
+            "32": {
+              "coverage": 0.37931,
+              "perfect_match": 0.344828,
+              "ndcg": 0.177653,
+              "mrr": 0.112445
+            },
+            "64": {
+              "coverage": 0.172414,
+              "perfect_match": 0.149425,
+              "ndcg": 0.078425,
+              "mrr": 0.04808
+            }
+          },
+          "rerank_time_sec": 187.3
+        },
+        "yuhan_kimberly": {
+          "num_queries": 203,
+          "num_corpus": 2015,
+          "metrics_by_cand_k": {
+            "16": {
+              "coverage": 0.546798,
+              "perfect_match": 0.527094,
+              "ndcg": 0.311414,
+              "mrr": 0.233643
+            },
+            "32": {
+              "coverage": 0.342365,
+              "perfect_match": 0.315271,
+              "ndcg": 0.211265,
+              "mrr": 0.16654
+            },
+            "64": {
+              "coverage": 0.258621,
+              "perfect_match": 0.241379,
+              "ndcg": 0.151788,
+              "mrr": 0.116267
+            }
+          },
+          "rerank_time_sec": 300.8
+        }
+      },
+      "overall_by_cand_k": {
+        "16": {
+          "coverage": 0.63245,
+          "perfect_match": 0.558726,
+          "ndcg": 0.367052,
+          "mrr": 0.243053
+        },
+        "32": {
+          "coverage": 0.433476,
+          "perfect_match": 0.355369,
+          "ndcg": 0.258495,
+          "mrr": 0.17143
+        },
+        "64": {
+          "coverage": 0.290487,
+          "perfect_match": 0.221641,
+          "ndcg": 0.174201,
+          "mrr": 0.113799
+        }
+      }
+    }
+  ]
+}
