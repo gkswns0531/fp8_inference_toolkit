@@ -23,16 +23,15 @@
 |--------|------|--------|
 | [AI-2252](https://linear.app/allganize/issue/AI-2252/bf16-임베딩-6모델-레이턴시-측정-및-보고서) | BF16 임베딩 6모델 레이턴시 측정 및 보고서 | [`EMBEDDING_LATENCY_REPORT.md`](./EMBEDDING_LATENCY_REPORT.md), [`embedding_latency_results.json`](./embedding_latency_results.json) |
 | [AI-2253](https://linear.app/allganize/issue/AI-2253/fp4nvfp4-임베딩-추론-가능성-조사) | FP4/NVFP4 임베딩 추론 가능성 조사 | [`FP4_INFERENCE_RESEARCH.md`](./FP4_INFERENCE_RESEARCH.md) |
+| [AI-2254](https://linear.app/allganize/issue/AI-2254/fp8-임베딩-6모델-레이턴시-측정) | FP8 임베딩 6모델 레이턴시 측정 | [`embedding_latency_results_fp8.json`](./embedding_latency_results_fp8.json) |
+| [AI-2255](https://linear.app/allganize/issue/AI-2255/fp4-임베딩-모델-nvfp4-양자화) | FP4 임베딩 모델 NVFP4 양자화 (6모델 전체) | HuggingFace `Forturne/*-NVFP4` repos |
+| [AI-2256](https://linear.app/allganize/issue/AI-2256/fp4-임베딩-모델-레이턴시-측정) | FP4 임베딩 모델 레이턴시 측정 | [`embedding_latency_results_nvfp4.json`](./embedding_latency_results_nvfp4.json) |
+| [AI-2257](https://linear.app/allganize/issue/AI-2257/bf16-vs-fp8-vs-fp4-임베딩-정확도-오차-검증) | BF16 vs FP8 vs FP4 정확도 오차 검증 | [`embedding_accuracy_results.json`](./embedding_accuracy_results.json) |
+| [AI-2258](https://linear.app/allganize/issue/AI-2258/bf16fp8fp4-임베딩-통합-비교-보고서) | BF16/FP8/FP4 임베딩 통합 비교 보고서 | [`EMBEDDING_BENCHMARK_REPORT.md`](./EMBEDDING_BENCHMARK_REPORT.md) |
 
 ### Todo
 
-| Ticket | Task | Blocked By | Details |
-|--------|------|------------|---------|
-| [AI-2254](https://linear.app/allganize/issue/AI-2254/fp8-임베딩-6모델-레이턴시-측정) | FP8 임베딩 6모델 레이턴시 측정 | — | Forturne/FP8 모델 또는 on-the-fly `quantization="fp8"` 사용. BF16과 동일 방법론. |
-| [AI-2255](https://linear.app/allganize/issue/AI-2255/fp4-임베딩-모델-nvfp4-양자화) | FP4 임베딩 모델 NVFP4 양자화 | — | 0.6B, 4B, VL-2B, VL-8B 직접 양자화. 8B는 `alexliap/Qwen3-Embedding-8B-NVFP4` 활용 가능. `quantization/nvfp4_quantize.py` 사용. |
-| [AI-2256](https://linear.app/allganize/issue/AI-2256/fp4-임베딩-모델-레이턴시-측정) | FP4 임베딩 모델 레이턴시 측정 | AI-2255 | NVFP4 양자화 완료 후 진행. `quantization="compressed-tensors"`로 로드. |
-| [AI-2257](https://linear.app/allganize/issue/AI-2257/bf16-vs-fp8-vs-fp4-임베딩-정확도-오차-검증) | BF16 vs FP8 vs FP4 정확도 오차 검증 | AI-2254, AI-2256 | 100개 query-doc 쌍 cosine similarity 비교 + embedding MAE 측정. |
-| [AI-2258](https://linear.app/allganize/issue/AI-2258/bf16fp8fp4-임베딩-통합-비교-보고서) | BF16/FP8/FP4 임베딩 통합 비교 보고서 | AI-2254, AI-2256, AI-2257 | 레이턴시 + 정확도 통합 분석. 프로덕션 권장 설정 제안. |
+(All tasks completed.)
 
 ## Methodology
 
@@ -62,11 +61,16 @@ BF16을 ground truth로 FP8/FP4의 임베딩 품질 오차를 측정한다:
 
 ```
 benchmark/
-├── PROJECT_STATUS.md                  ← 이 문서
-├── EMBEDDING_LATENCY_REPORT.md        ← BF16 레이턴시 보고서 (Done)
-├── FP4_INFERENCE_RESEARCH.md          ← FP4 추론 가능성 조사 (Done)
-├── embedding_latency_results.json     ← BF16 레이턴시 raw 데이터
-├── benchmark_embedding_latency.py     ← 레이턴시 벤치마크 스크립트
-├── prepare_test_data.py               ← 테스트 데이터 준비 스크립트
-└── test_data/                         ← War and Peace 원본 + 토큰화 데이터
+├── PROJECT_STATUS.md                          ← 이 문서
+├── EMBEDDING_BENCHMARK_REPORT.md              ← BF16/FP8/NVFP4 통합 최종 보고서
+├── EMBEDDING_LATENCY_REPORT.md                ← BF16 레이턴시 보고서
+├── FP4_INFERENCE_RESEARCH.md                  ← FP4 추론 가능성 조사
+├── embedding_latency_results.json             ← BF16 레이턴시 raw 데이터
+├── embedding_latency_results_fp8.json         ← FP8 레이턴시 raw 데이터
+├── embedding_latency_results_nvfp4.json       ← NVFP4 레이턴시 raw 데이터
+├── embedding_accuracy_results.json            ← BF16 vs FP8 vs NVFP4 정합성 데이터
+├── benchmark_embedding_latency.py             ← 레이턴시 벤치마크 스크립트
+├── benchmark_accuracy_bf16_fp8_fp4.py         ← 정합성 검증 스크립트
+├── prepare_test_data.py                       ← 테스트 데이터 준비 스크립트
+└── test_data/                                 ← War and Peace 원본 + 토큰화 데이터
 ```

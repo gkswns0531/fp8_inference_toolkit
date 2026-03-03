@@ -1,0 +1,161 @@
+{
+  "timestamp": "2026-03-03 03:54:52",
+  "results": [
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-2B",
+      "short": "VL-2B",
+      "num_pairs": 100,
+      "embedding_dim": 2048,
+      "fp8": {
+        "emb_cos_sim_mean": 0.994781,
+        "emb_cos_sim_min": 0.990972,
+        "emb_cos_sim_p99": 0.991865,
+        "mae": 0.00175837,
+        "max_ae": 0.031998,
+        "qd_sim_diff_mean": 0.005685,
+        "qd_sim_diff_max": 0.025953,
+        "qd_sim_diff_p99": 0.019451
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.935912,
+        "emb_cos_sim_min": 0.908982,
+        "emb_cos_sim_p99": 0.913961,
+        "mae": 0.00618116,
+        "max_ae": 0.118909,
+        "qd_sim_diff_mean": 0.021255,
+        "qd_sim_diff_max": 0.066127,
+        "qd_sim_diff_p99": 0.061422
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Embedding-8B",
+      "short": "VL-8B",
+      "num_pairs": 100,
+      "embedding_dim": 4096,
+      "fp8": {
+        "emb_cos_sim_mean": 0.992763,
+        "emb_cos_sim_min": 0.986937,
+        "emb_cos_sim_p99": 0.987946,
+        "mae": 0.00145168,
+        "max_ae": 0.040662,
+        "qd_sim_diff_mean": 0.007949,
+        "qd_sim_diff_max": 0.031817,
+        "qd_sim_diff_p99": 0.026719
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.951535,
+        "emb_cos_sim_min": 0.931949,
+        "emb_cos_sim_p99": 0.935959,
+        "mae": 0.00381193,
+        "max_ae": 0.066488,
+        "qd_sim_diff_mean": 0.021675,
+        "qd_sim_diff_max": 0.052185,
+        "qd_sim_diff_p99": 0.044052
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-Embedding-0.6B",
+      "short": "Emb-0.6B",
+      "num_pairs": 100,
+      "embedding_dim": 1024,
+      "fp8": {
+        "emb_cos_sim_mean": 0.995422,
+        "emb_cos_sim_min": 0.989302,
+        "emb_cos_sim_p99": 0.991729,
+        "mae": 0.00233725,
+        "max_ae": 0.023077,
+        "qd_sim_diff_mean": 0.007435,
+        "qd_sim_diff_max": 0.034128,
+        "qd_sim_diff_p99": 0.027579
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.903019,
+        "emb_cos_sim_min": 0.8015,
+        "emb_cos_sim_p99": 0.822812,
+        "mae": 0.01076116,
+        "max_ae": 0.09215,
+        "qd_sim_diff_mean": 0.052781,
+        "qd_sim_diff_max": 0.149192,
+        "qd_sim_diff_p99": 0.134879
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-Embedding-4B",
+      "short": "Emb-4B",
+      "num_pairs": 100,
+      "embedding_dim": 2560,
+      "fp8": {
+        "emb_cos_sim_mean": 0.9959,
+        "emb_cos_sim_min": 0.99289,
+        "emb_cos_sim_p99": 0.993678,
+        "mae": 0.0014113,
+        "max_ae": 0.013484,
+        "qd_sim_diff_mean": 0.005604,
+        "qd_sim_diff_max": 0.022575,
+        "qd_sim_diff_p99": 0.016406
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.944189,
+        "emb_cos_sim_min": 0.922153,
+        "emb_cos_sim_p99": 0.926518,
+        "mae": 0.00520192,
+        "max_ae": 0.061956,
+        "qd_sim_diff_mean": 0.026726,
+        "qd_sim_diff_max": 0.074961,
+        "qd_sim_diff_p99": 0.073184
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-Embedding-8B",
+      "short": "Emb-8B",
+      "num_pairs": 100,
+      "embedding_dim": 4096,
+      "fp8": {
+        "emb_cos_sim_mean": 0.997605,
+        "emb_cos_sim_min": 0.996005,
+        "emb_cos_sim_p99": 0.996183,
+        "mae": 0.00083322,
+        "max_ae": 0.021082,
+        "qd_sim_diff_mean": 0.004376,
+        "qd_sim_diff_max": 0.021923,
+        "qd_sim_diff_p99": 0.018316
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.967061,
+        "emb_cos_sim_min": 0.947799,
+        "emb_cos_sim_p99": 0.95202,
+        "mae": 0.00311453,
+        "max_ae": 0.062393,
+        "qd_sim_diff_mean": 0.017778,
+        "qd_sim_diff_max": 0.055054,
+        "qd_sim_diff_p99": 0.053257
+      }
+    },
+    {
+      "model": "BAAI/bge-m3",
+      "short": "bge-m3",
+      "num_pairs": 100,
+      "embedding_dim": 1024,
+      "fp8": {
+        "emb_cos_sim_mean": 0.99625,
+        "emb_cos_sim_min": 0.993365,
+        "emb_cos_sim_p99": 0.993913,
+        "mae": 0.00213693,
+        "max_ae": 0.014395,
+        "qd_sim_diff_mean": 0.00356,
+        "qd_sim_diff_max": 0.013503,
+        "qd_sim_diff_p99": 0.01102
+      },
+      "nvfp4": {
+        "emb_cos_sim_mean": 0.541514,
+        "emb_cos_sim_min": 0.322434,
+        "emb_cos_sim_p99": 0.340275,
+        "mae": 0.02236212,
+        "max_ae": 0.479454,
+        "qd_sim_diff_mean": 0.101235,
+        "qd_sim_diff_max": 0.307863,
+        "qd_sim_diff_p99": 0.272561
+      }
+    }
+  ]
+}

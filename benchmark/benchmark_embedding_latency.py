@@ -38,6 +38,16 @@ import numpy as np
 
 EMBEDDING_MODELS = [
     {
+        "model_id": "Qwen/Qwen3-VL-Embedding-2B",
+        "max_context": 32768,
+        "tokenizer_dir": "qwen3-vl-embedding",
+    },
+    {
+        "model_id": "Qwen/Qwen3-VL-Embedding-8B",
+        "max_context": 32768,
+        "tokenizer_dir": "qwen3-vl-embedding",
+    },
+    {
         "model_id": "Qwen/Qwen3-Embedding-0.6B",
         "max_context": 32768,
         "tokenizer_dir": "qwen3-embedding",
@@ -51,16 +61,6 @@ EMBEDDING_MODELS = [
         "model_id": "Qwen/Qwen3-Embedding-8B",
         "max_context": 32768,
         "tokenizer_dir": "qwen3-embedding",
-    },
-    {
-        "model_id": "Qwen/Qwen3-VL-Embedding-2B",
-        "max_context": 32768,
-        "tokenizer_dir": "qwen3-vl-embedding",
-    },
-    {
-        "model_id": "Qwen/Qwen3-VL-Embedding-8B",
-        "max_context": 32768,
-        "tokenizer_dir": "qwen3-vl-embedding",
     },
     {
         "model_id": "BAAI/bge-m3",
@@ -150,6 +150,7 @@ def benchmark_model(
     num_runs: int,
     max_model_len: int,
     gpu_memory_utilization: float,
+    quantization: str | None = None,
 ) -> list[dict]:
     """Benchmark a single embedding model."""
     from vllm import LLM
@@ -162,8 +163,9 @@ def benchmark_model(
 
     model_max_len = min(max_model_len, max_context)
 
-    print(f"  Loading model with vLLM (runner=pooling, max_model_len={model_max_len}) ...")
-    llm = LLM(
+    quant_str = f", quantization={quantization}" if quantization else ""
+    print(f"  Loading model with vLLM (runner=pooling, max_model_len={model_max_len}{quant_str}) ...")
+    llm_kwargs = dict(
         model=model_id,
         runner="pooling",
         convert="embed",
@@ -172,6 +174,9 @@ def benchmark_model(
         trust_remote_code=True,
         enforce_eager=False,
     )
+    if quantization:
+        llm_kwargs["quantization"] = quantization
+    llm = LLM(**llm_kwargs)
 
     gpu_mem_loaded = get_gpu_memory_mib()
     print(f"  GPU memory after load: {gpu_mem_loaded} MiB")
@@ -321,12 +326,41 @@ def parse_args():
         help=f"GPU memory utilization (default: {DEFAULT_GPU_MEM})",
     )
     parser.add_argument(
+        "--quantization",
+        type=str,
+        default=None,
+        help="vLLM quantization method (e.g. 'fp8', 'compressed-tensors'). None for BF16.",
+    )
+    parser.add_argument(
+        "--model-dir",
+        type=str,
+        default=None,
+        help="Base directory for quantized models. Model paths are constructed as "
+             "<model-dir>/<model-name-lower>-<suffix>/. "
+             "Requires --quantization-suffix to be set.",
+    )
+    parser.add_argument(
+        "--quantization-suffix",
+        type=str,
+        default=None,
+        help="Suffix for quantized model directory names (e.g. 'fp8', 'nvfp4'). "
+             "Used with --model-dir to construct paths.",
+    )
+    parser.add_argument(
         "--output",
         type=str,
         default=None,
-        help="Output JSON file path (default: benchmark/embedding_latency_results.json)",
+        help="Output JSON file path (default: auto-generated based on quantization)",
     )
     return parser.parse_args()
+
+
+def resolve_model_path(model_cfg: dict, model_dir: str | None, quant_suffix: str | None) -> str:
+    """Resolve model path: use local quantized dir if --model-dir is set, otherwise HF model_id."""
+    if model_dir and quant_suffix:
+        model_name = model_cfg["model_id"].split("/")[-1].lower()
+        return os.path.join(model_dir, f"{model_name}-{quant_suffix}")
+    return model_cfg["model_id"]
 
 
 def main():
@@ -336,6 +370,7 @@ def main():
 
     # Filter models
     if args.model:
+        # Accept both HF model IDs and local paths
         models = [m for m in EMBEDDING_MODELS if m["model_id"] == args.model]
         if not models:
             print(f"ERROR: Model '{args.model}' not found in EMBEDDING_MODELS.")
@@ -344,10 +379,16 @@ def main():
     else:
         models = EMBEDDING_MODELS
 
+    quant_label = args.quantization or "bf16"
+
     print("=" * 70)
-    print("Embedding Model Latency Benchmark")
+    print(f"Embedding Model Latency Benchmark ({quant_label.upper()})")
     print("=" * 70)
     print(f"  Models:       {[m['model_id'] for m in models]}")
+    print(f"  Quantization: {args.quantization or 'None (BF16)'}")
+    if args.model_dir:
+        print(f"  Model dir:    {args.model_dir}")
+        print(f"  Quant suffix: {args.quantization_suffix}")
     print(f"  Batch sizes:  {batch_sizes}")
     print(f"  Input lengths:{input_lengths}")
     print(f"  Warmup:       {args.num_warmup}")
@@ -359,15 +400,16 @@ def main():
     all_results = []
 
     for i, model_cfg in enumerate(models):
-        model_id = model_cfg["model_id"]
+        model_path = resolve_model_path(model_cfg, args.model_dir, args.quantization_suffix)
         print(f"\n{'─' * 70}")
-        print(f"[{i+1}/{len(models)}] {model_id}")
+        print(f"[{i+1}/{len(models)}] {model_cfg['model_id']} ({quant_label.upper()})")
+        print(f"  model_path={model_path}")
         print(f"  max_context={model_cfg['max_context']}, tokenizer_dir={model_cfg['tokenizer_dir']}")
         print(f"{'─' * 70}")
 
         try:
             results = benchmark_model(
-                model_id=model_id,
+                model_id=model_path,
                 tokenizer_dir=model_cfg["tokenizer_dir"],
                 max_context=model_cfg["max_context"],
                 input_lengths=input_lengths,
@@ -376,7 +418,12 @@ def main():
                 num_runs=args.num_runs,
                 max_model_len=args.max_model_len,
                 gpu_memory_utilization=args.gpu_memory_utilization,
+                quantization=args.quantization,
             )
+            # Tag results with original model name for comparison
+            for r in results:
+                r["model"] = model_cfg["model_id"]
+                r["quantization"] = quant_label
             all_results.extend(results)
         except Exception as e:
             print(f"  ERROR: {e}")
@@ -387,10 +434,11 @@ def main():
     print_summary_table(all_results)
 
     # Save results
-    output_file = args.output or os.path.join(
+    default_output = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "embedding_latency_results.json",
+        f"embedding_latency_results_{quant_label}.json",
     )
+    output_file = args.output or default_output
     output = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         "config": {

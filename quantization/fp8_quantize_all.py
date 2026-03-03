@@ -33,14 +33,14 @@ from llmcompressor.modifiers.quantization import QuantizationModifier
 
 HF_TOKEN = os.environ.get("HF_TOKEN", "your_hf_token_here")
 
-# 양자화할 모델 목록
+# 양자화할 모델 목록 (VL → Embedding → bge-m3 순서)
 MODELS = [
     "Qwen/Qwen3-VL-Embedding-2B",
     "Qwen/Qwen3-VL-Embedding-8B",
     "Qwen/Qwen3-Embedding-0.6B",
+    "Qwen/Qwen3-Embedding-4B",
+    "Qwen/Qwen3-Embedding-8B",
     "BAAI/bge-m3",
-    # "Qwen/Qwen3-Embedding-4B",
-    # "Qwen/Qwen3-Embedding-8B",
 ]
 
 OUTPUT_BASE_DIR = "/home/ubuntu/models"
@@ -193,21 +193,28 @@ def quantize_and_upload(model_id: str, output_dir: str, repo_id: str, hf_token: 
 
 
 def main():
-    api = HfApi(token=HF_TOKEN)
-    username = api.whoami()["name"]
+    hf_token = HF_TOKEN if HF_TOKEN and HF_TOKEN != "your_hf_token_here" else ""
+    username = None
+    if hf_token:
+        try:
+            api = HfApi(token=hf_token)
+            username = api.whoami()["name"]
+        except Exception:
+            hf_token = ""
 
     for model_id in MODELS:
         model_name = model_id.split("/")[-1]
         output_dir = os.path.join(OUTPUT_BASE_DIR, f"{model_name.lower()}-fp8")
-        repo_id = f"{username}/{model_name}-FP8"
+        repo_id = f"{username}/{model_name}-FP8" if username else f"local/{model_name}-FP8"
 
         try:
-            quantize_and_upload(model_id, output_dir, repo_id, HF_TOKEN)
+            quantize_and_upload(model_id, output_dir, repo_id, hf_token)
         except Exception as e:
             print(f"FAILED: {model_id}")
             print(f"Error: {e}")
             import traceback
             traceback.print_exc()
+            gc.collect()
             torch.cuda.empty_cache()
             continue
 
