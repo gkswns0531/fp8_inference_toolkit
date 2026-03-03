@@ -15,6 +15,7 @@ LLM/VLM 모델의 양자화(FP8, INT4 GPTQ/AWQ, NVFP4), 벤치마크, Hugging Fa
 | **Reranker Benchmark** | 6모델 BF16/FP8/NVFP4 레이턴시 + 정합성 | [`RERANKER_BENCHMARK_REPORT.md`](benchmark/RERANKER_BENCHMARK_REPORT.md) |
 | **Project Status** | 전체 태스크 트래커 (Linear 티켓 연동) | [`PROJECT_STATUS.md`](benchmark/PROJECT_STATUS.md) |
 | **FP4 Research** | FP4/NVFP4 추론 가능성 조사 | [`FP4_INFERENCE_RESEARCH.md`](benchmark/FP4_INFERENCE_RESEARCH.md) |
+| **vLLM Qwen3 Reranker Bug** | FP8/NVFP4 양자화 버그 분석 + 수정 제안 | [`VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md`](docs/VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md) |
 
 ### Key Results Summary
 
@@ -82,6 +83,9 @@ fp8_inference_toolkit/
 │   ├── csrc/                                       # CUDA kernel 소스
 │   └── calibration/                                # Calibration 도구
 └── docs/                                            # 추가 문서
+    ├── VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md      # vLLM Qwen3 리랭커 양자화 버그 분석
+    ├── native_int4_tc_implementation_report.md       # INT4 Native TC 구현 리포트
+    └── vllm_quantization_kernels.md                  # vLLM 양자화 커널 분석
 ```
 
 ---
@@ -226,11 +230,14 @@ vllm serve BAAI/bge-reranker-v2-m3 \
 
 ### vLLM 0.16.0: Qwen3 Reranker FP8/NVFP4 비호환
 
-Qwen3 리랭커는 `from_2_way_softmax` weight loading + `tie_word_embeddings=True` 조합으로 인해 FP8/NVFP4 양자화 추론이 불가합니다:
-- FP8: `lm_head.weight` 미로드 → score = 0
-- NVFP4: `ReplicatedLinear.weight` 속성 없음 → crash
+Qwen3 리랭커는 `from_2_way_softmax` weight loading에서 `score` layer에 `quant_config`가 전달되어 FP8/NVFP4 양자화 추론이 불가합니다:
+- FP8: score layer output_dim=1 → Marlin tile alignment(64) 위반 → score=0
+- NVFP4: score layer에 `weight_packed`만 등록, `.weight` 접근 시 crash
+- 관련 이슈: [vllm#33970](https://github.com/vllm-project/vllm/issues/33970)
+- 수정 제안: `score` layer 생성 시 `quant_config=None` (1줄 수정)
 
-**해결**: vLLM upstream 패치 대기. 현재는 BF16만 사용.
+**상세 분석**: [`docs/VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md`](docs/VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md)
+**Workaround**: 현재는 BF16만 사용.
 
 ### XLM-RoBERTa NVFP4 품질 붕괴
 
