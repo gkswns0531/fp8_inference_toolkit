@@ -1,10 +1,10 @@
-# Embedding Model Inference Benchmark — Project Status
+# Embedding & Reranker Model Inference Benchmark — Project Status
 
 **Epic**: [AI-2251](https://linear.app/allganize/issue/AI-2251/embedding-model-inference-benchmark-bf16fp8fp4) Embedding Model Inference Benchmark (BF16/FP8/FP4)
 **GPU**: NVIDIA RTX PRO 6000 Blackwell Server Edition (96 GB)
 **Engine**: vLLM 0.16.0
 
-## Target Models
+## Embedding Target Models
 
 | Model | Parameters | Type | Max Context |
 |-------|-----------|------|-------------|
@@ -15,7 +15,18 @@
 | Qwen3-VL-Embedding-8B | 8B | Vision-Language Embedding | 32,768 |
 | BAAI/bge-m3 | 0.6B | Text Embedding | 8,192 |
 
-## Task Tracker
+## Reranker Target Models
+
+| Model | Parameters | Type | Native Arch | vLLM Override | Max Context |
+|-------|-----------|------|-------------|---------------|-------------|
+| Qwen3-VL-Reranker-2B | 2B | VL Reranker | Qwen3VLForConditionalGeneration | Qwen3VLForSequenceClassification | 32,768 |
+| Qwen3-VL-Reranker-8B | 8B | VL Reranker | 동일 | 동일 | 32,768 |
+| Qwen3-Reranker-0.6B | 0.6B | Text Reranker | Qwen3ForCausalLM | Qwen3ForSequenceClassification | 32,768 |
+| Qwen3-Reranker-4B | 4B | Text Reranker | 동일 | 동일 | 32,768 |
+| Qwen3-Reranker-8B | 8B | Text Reranker | 동일 | 동일 | 32,768 |
+| bge-reranker-v2-m3 | 0.6B | Text Reranker | XLMRobertaForSequenceClassification | — (native) | 8,192 |
+
+## Embedding Task Tracker
 
 ### Done
 
@@ -29,9 +40,18 @@
 | [AI-2257](https://linear.app/allganize/issue/AI-2257/bf16-vs-fp8-vs-fp4-임베딩-정확도-오차-검증) | BF16 vs FP8 vs FP4 정확도 오차 검증 | [`embedding_accuracy_results.json`](./embedding_accuracy_results.json) |
 | [AI-2258](https://linear.app/allganize/issue/AI-2258/bf16fp8fp4-임베딩-통합-비교-보고서) | BF16/FP8/FP4 임베딩 통합 비교 보고서 | [`EMBEDDING_BENCHMARK_REPORT.md`](./EMBEDDING_BENCHMARK_REPORT.md) |
 
-### Todo
+## Reranker Task Tracker
 
-(All tasks completed.)
+### Done
+
+| Step | Task | Output | Note |
+|------|------|--------|------|
+| Step 0 | Smoke Test — vLLM `score()` + FP8 호환 검증 | PASS | BF16 전 모델 정상, FP8 로딩 정상 (score 출력은 Qwen3 모델에서 0) |
+| Step 1 | FP8 리랭커 6모델 양자화 | `/home/ubuntu/models/*-fp8` | 완료, HF 업로드 대기 |
+| Step 2 | NVFP4 리랭커 6모델 양자화 | `/home/ubuntu/models/*-nvfp4` | 완료, HF 업로드 대기 |
+| Step 3 | BF16/FP8/NVFP4 리랭커 레이턴시 측정 | `reranker_latency_results_*.json` | BF16 6/6, FP8 6/6, NVFP4 1/6 (bge only) |
+| Step 4 | BF16 vs FP8 vs NVFP4 리랭커 정합성 검증 | `reranker_accuracy_results.json` | Qwen3 FP8/NVFP4 비호환, bge FP8 PASS / NVFP4 FAIL |
+| Step 5 | 통합 보고서 | [`RERANKER_BENCHMARK_REPORT.md`](./RERANKER_BENCHMARK_REPORT.md) | 완료 |
 
 ## Methodology
 
@@ -61,16 +81,23 @@ BF16을 ground truth로 FP8/FP4의 임베딩 품질 오차를 측정한다:
 
 ```
 benchmark/
-├── PROJECT_STATUS.md                          ← 이 문서
-├── EMBEDDING_BENCHMARK_REPORT.md              ← BF16/FP8/NVFP4 통합 최종 보고서
-├── EMBEDDING_LATENCY_REPORT.md                ← BF16 레이턴시 보고서
-├── FP4_INFERENCE_RESEARCH.md                  ← FP4 추론 가능성 조사
-├── embedding_latency_results.json             ← BF16 레이턴시 raw 데이터
-├── embedding_latency_results_fp8.json         ← FP8 레이턴시 raw 데이터
-├── embedding_latency_results_nvfp4.json       ← NVFP4 레이턴시 raw 데이터
-├── embedding_accuracy_results.json            ← BF16 vs FP8 vs NVFP4 정합성 데이터
-├── benchmark_embedding_latency.py             ← 레이턴시 벤치마크 스크립트
-├── benchmark_accuracy_bf16_fp8_fp4.py         ← 정합성 검증 스크립트
-├── prepare_test_data.py                       ← 테스트 데이터 준비 스크립트
-└── test_data/                                 ← War and Peace 원본 + 토큰화 데이터
+├── PROJECT_STATUS.md                              ← 이 문서
+├── EMBEDDING_BENCHMARK_REPORT.md                  ← 임베딩 BF16/FP8/NVFP4 통합 최종 보고서
+├── RERANKER_BENCHMARK_REPORT.md                   ← 리랭커 BF16/FP8/NVFP4 통합 보고서
+├── EMBEDDING_LATENCY_REPORT.md                    ← BF16 레이턴시 보고서
+├── FP4_INFERENCE_RESEARCH.md                      ← FP4 추론 가능성 조사
+├── embedding_latency_results.json                 ← 임베딩 BF16 레이턴시 raw 데이터
+├── embedding_latency_results_fp8.json             ← 임베딩 FP8 레이턴시 raw 데이터
+├── embedding_latency_results_nvfp4.json           ← 임베딩 NVFP4 레이턴시 raw 데이터
+├── embedding_accuracy_results.json                ← 임베딩 BF16 vs FP8 vs NVFP4 정합성 데이터
+├── reranker_latency_results_bf16.json             ← 리랭커 BF16 레이턴시 raw 데이터
+├── reranker_latency_results_fp8.json              ← 리랭커 FP8 레이턴시 raw 데이터
+├── reranker_latency_results_nvfp4.json            ← 리랭커 NVFP4 레이턴시 raw 데이터
+├── reranker_accuracy_results.json                 ← 리랭커 BF16 vs FP8 vs NVFP4 정합성 데이터
+├── benchmark_embedding_latency.py                 ← 임베딩 레이턴시 벤치마크
+├── benchmark_accuracy_bf16_fp8_fp4.py             ← 임베딩 정합성 검증
+├── benchmark_reranker_latency.py                  ← 리랭커 레이턴시 벤치마크
+├── benchmark_reranker_accuracy_bf16_fp8_fp4.py    ← 리랭커 정합성 검증
+├── prepare_test_data.py                           ← 테스트 데이터 준비 스크립트
+└── test_data/                                     ← War and Peace 원본 + 토큰화 데이터
 ```

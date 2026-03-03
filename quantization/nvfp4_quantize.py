@@ -37,7 +37,7 @@ import os
 import time
 import torch
 from transformers import AutoProcessor, AutoTokenizer, AutoConfig, AutoModel
-from transformers import AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoModelForSequenceClassification
 from huggingface_hub import HfApi, create_repo
 from llmcompressor import oneshot
 from llmcompressor.modifiers.quantization import QuantizationModifier
@@ -163,7 +163,7 @@ def get_ignore_patterns(model) -> list[str]:
     - shared_expert_gate: shared/routed expert 혼합 비율 결정
     - DeltaNet (linear_attn): recurrent state 누적 오차, conv1d 비호환
     """
-    ignore = ["re:.*lm_head"]
+    ignore = ["re:.*lm_head", "re:.*classifier.*"]
 
     detected = set()
     has_moe = False
@@ -262,7 +262,8 @@ def quantize_and_upload(
             model_id, torch_dtype="auto", device_map="auto", trust_remote_code=True,
         )
     elif mtype == "encoder":
-        model = AutoModel.from_pretrained(
+        # Use AutoModelForSequenceClassification to preserve classifier head for reranker models
+        model = AutoModelForSequenceClassification.from_pretrained(
             model_id, torch_dtype="auto", device_map="auto", trust_remote_code=True,
         )
     else:

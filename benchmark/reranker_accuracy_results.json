@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-03-03 06:42:03",
+  "results": [
+    {
+      "model": "Qwen/Qwen3-VL-Reranker-2B",
+      "short": "VL-Reranker-2B",
+      "num_pairs": 100,
+      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
+      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+    },
+    {
+      "model": "Qwen/Qwen3-VL-Reranker-8B",
+      "short": "VL-Reranker-8B",
+      "num_pairs": 100,
+      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
+      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+    },
+    {
+      "model": "Qwen/Qwen3-Reranker-0.6B",
+      "short": "Reranker-0.6B",
+      "num_pairs": 100,
+      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
+      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+    },
+    {
+      "model": "Qwen/Qwen3-Reranker-4B",
+      "short": "Reranker-4B",
+      "num_pairs": 100,
+      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
+      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+    },
+    {
+      "model": "Qwen/Qwen3-Reranker-8B",
+      "short": "Reranker-8B",
+      "num_pairs": 100,
+      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
+      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+    },
+    {
+      "model": "BAAI/bge-reranker-v2-m3",
+      "short": "bge-reranker-v2-m3",
+      "num_pairs": 100,
+      "fp8": {
+        "score_mae": 0.003613,
+        "score_max_diff": 0.067467,
+        "spearman_corr": 0.998188,
+        "spearman_p": 0.0,
+        "top10_overlap": 1.0,
+        "top20_overlap": 0.95
+      },
+      "nvfp4": {
+        "score_mae": 0.062492,
+        "score_max_diff": 0.947552,
+        "spearman_corr": 0.569253,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.5,
+        "top20_overlap": 0.4
+      }
+    }
+  ]
+}
