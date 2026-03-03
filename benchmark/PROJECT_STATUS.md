@@ -49,8 +49,8 @@
 | Step 0 | Smoke Test — vLLM `score()` + FP8 호환 검증 | PASS | BF16 전 모델 정상, FP8 로딩 정상 (score 출력은 Qwen3 모델에서 0) |
 | Step 1 | FP8 리랭커 6모델 양자화 | `/home/ubuntu/models/*-fp8` | 완료, HF 업로드 대기 |
 | Step 2 | NVFP4 리랭커 6모델 양자화 | `/home/ubuntu/models/*-nvfp4` | 완료, HF 업로드 대기 |
-| Step 3 | BF16/FP8/NVFP4 리랭커 레이턴시 측정 | `reranker_latency_results_*.json` | BF16 6/6, FP8 6/6, NVFP4 1/6 (bge only) |
-| Step 4 | BF16 vs FP8 vs NVFP4 리랭커 정합성 검증 | `reranker_accuracy_results.json` | Qwen3 FP8/NVFP4 비호환, bge FP8 PASS / NVFP4 FAIL |
+| Step 3 | BF16/FP8/NVFP4 리랭커 레이턴시 측정 | `reranker_latency_results_*.json` | BF16 6/6, FP8 6/6, NVFP4 6/6 (패치 후 전 모델 완료) |
+| Step 4 | BF16 vs FP8 vs NVFP4 리랭커 정합성 검증 | `reranker_accuracy_results.json` | FP8 전 모델 PASS, NVFP4 Qwen3 8B급 PASS / 소형 CAUTION / bge FAIL |
 | Step 5 | 통합 보고서 | [`RERANKER_BENCHMARK_REPORT.md`](./RERANKER_BENCHMARK_REPORT.md) | 완료 |
 
 ## Methodology
