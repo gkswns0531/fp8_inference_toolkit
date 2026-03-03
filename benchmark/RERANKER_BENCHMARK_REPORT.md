@@ -26,35 +26,25 @@
 
 ---
 
-## 0. Critical: vLLM 0.16.0 Qwen3 Reranker Quantization 비호환
+## 0. Note: vLLM 0.16.0 Qwen3 Reranker Quantization 버그 패치
 
-> **Qwen3 계열 리랭커 5개 모델은 vLLM 0.16.0에서 FP8/NVFP4 양자화 추론이 불가능합니다.**
+> **vLLM 0.16.0에서 Qwen3 리랭커 FP8/NVFP4 양자화 추론 버그가 존재했으나, `adapters.py` 패치 적용 후 전 모델 정상 동작 확인.**
 
-### 근본 원인
+### 버그 요약
 
-Qwen3 리랭커는 CausalLM 아키텍처를 SequenceClassification으로 변환하는 `from_2_way_softmax` 방식을 사용합니다:
+`as_seq_cls_model()`에서 score layer 생성 시 `quant_config`를 전달하여 발생:
+- FP8: score layer output_dim=1 → Marlin tile alignment(64) 위반 → score=0
+- NVFP4: score layer에 `weight_packed`만 등록, `.weight` 접근 시 crash
 
+### 패치 내용
+
+```diff
+# vllm/model_executor/models/adapters.py:300
+- quant_config=quant_config,
++ quant_config=None,
 ```
-score.weight = lm_head.weight[true_token_id] - lm_head.weight[false_token_id]
-```
 
-이 과정에서 두 가지 vLLM 버그가 발생합니다:
-
-| 문제 | 양자화 | 원인 | 증상 |
-|------|--------|------|------|
-| Bug 1 | FP8 | `tie_word_embeddings=True` → checkpoint에 별도 `lm_head.weight` 미존재 → `from_2_way_softmax`가 새 `ParallelLMHead` 생성하나 weight 미로드 | score = 0.0 (전부) |
-| Bug 2 | NVFP4 | `from_2_way_softmax`가 `score_layer.weight` 접근 → NVFP4 양자화된 `ReplicatedLinear`는 `.weight` 속성 없음 | `AttributeError` crash |
-
-### 영향 범위
-
-- **영향 모델**: Qwen3-VL-Reranker-2B/8B, Qwen3-Reranker-0.6B/4B/8B (5개)
-- **영향 없는 모델**: bge-reranker-v2-m3 (native SequenceClassification, `from_2_way_softmax` 미사용)
-- **BF16 추론은 모든 모델에서 정상 동작**
-
-### 레이턴시 벤치마크 유효성
-
-- FP8 레이턴시 데이터는 모델 로딩/연산 자체는 정상이므로 **latency 측정값은 유효** (score 출력만 0)
-- NVFP4 레이턴시는 Qwen3 모델에서 **측정 불가** (crash)
+상세 분석: [`docs/VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md`](../docs/VLLM_QWEN3_RERANKER_QUANTIZATION_BUG.md) · 관련 이슈: [vllm#33970](https://github.com/vllm-project/vllm/issues/33970)
 
 ---
 
@@ -63,18 +53,18 @@ score.weight = lm_head.weight[true_token_id] - lm_head.weight[false_token_id]
 BF16을 ground truth로 FP8/NVFP4의 리랭커 score 오차를 측정.
 - **데이터**: War and Peace에서 추출한 100 query-doc 쌍 (128, 256, 512, 1024 토큰 혼합)
 - **측정 항목**: Score MAE, Max Diff, Spearman Rank Correlation, Top-K Overlap
-- **Qwen3 모델**: FP8/NVFP4 비호환으로 측정 불가 (위 Section 0 참조)
+- **vLLM**: 패치 적용 버전 (score layer `quant_config=None`)
 
 ### 1.1 Score MAE / Max Diff
 
 | Model | FP8 MAE | FP8 Max Diff | NVFP4 MAE | NVFP4 Max Diff |
 |-------|---------|--------------|-----------|----------------|
-| VL-Reranker-2B | N/A (Bug 1) | N/A | N/A (Bug 2) | N/A |
-| VL-Reranker-8B | N/A (Bug 1) | N/A | N/A (Bug 2) | N/A |
-| Reranker-0.6B | N/A (Bug 1) | N/A | N/A (Bug 2) | N/A |
-| Reranker-4B | N/A (Bug 1) | N/A | N/A (Bug 2) | N/A |
-| Reranker-8B | N/A (Bug 1) | N/A | N/A (Bug 2) | N/A |
-| bge-reranker-v2-m3 | 0.003613 | 0.067467 | 0.062492 | 0.947552 |
+| VL-Reranker-2B | 0.019800 | 0.132811 | 0.055900 | 0.331587 |
+| VL-Reranker-8B | 0.021694 | 0.155255 | 0.047264 | 0.374410 |
+| Reranker-0.6B | 0.025739 | 0.154471 | 0.135583 | 0.550437 |
+| Reranker-4B | 0.022516 | 0.178986 | 0.069312 | 0.469278 |
+| Reranker-8B | 0.018897 | 0.108588 | 0.044691 | 0.227421 |
+| bge-reranker-v2-m3 | 0.003616 | 0.067467 | 0.062495 | 0.947552 |
 
 ### 1.2 Spearman Rank Correlation
 
@@ -82,11 +72,11 @@ BF16을 ground truth로 FP8/NVFP4의 리랭커 score 오차를 측정.
 
 | Model | FP8 Spearman | NVFP4 Spearman |
 |-------|-------------|----------------|
-| VL-Reranker-2B | N/A | N/A |
-| VL-Reranker-8B | N/A | N/A |
-| Reranker-0.6B | N/A | N/A |
-| Reranker-4B | N/A | N/A |
-| Reranker-8B | N/A | N/A |
+| VL-Reranker-2B | **0.994** | 0.950 |
+| VL-Reranker-8B | **0.993** | 0.962 |
+| Reranker-0.6B | **0.986** | 0.839 |
+| Reranker-4B | **0.993** | 0.925 |
+| Reranker-8B | **0.995** | 0.966 |
 | bge-reranker-v2-m3 | **0.998** | 0.569 |
 
 ### 1.3 Top-K Rank Overlap
@@ -95,22 +85,22 @@ BF16 기준 상위 K개 문서와 양자화 모델의 상위 K개 문서의 일�
 
 | Model | FP8 Top-10 | FP8 Top-20 | NVFP4 Top-10 | NVFP4 Top-20 |
 |-------|-----------|-----------|-------------|-------------|
-| VL-Reranker-2B | N/A | N/A | N/A | N/A |
-| VL-Reranker-8B | N/A | N/A | N/A | N/A |
-| Reranker-0.6B | N/A | N/A | N/A | N/A |
-| Reranker-4B | N/A | N/A | N/A | N/A |
-| Reranker-8B | N/A | N/A | N/A | N/A |
+| VL-Reranker-2B | **1.00** | **0.95** | 0.90 | 0.90 |
+| VL-Reranker-8B | 0.90 | 0.90 | 0.90 | 0.85 |
+| Reranker-0.6B | 0.90 | 0.90 | 0.80 | 0.60 |
+| Reranker-4B | 0.90 | 0.90 | 0.70 | 0.90 |
+| Reranker-8B | **1.00** | **0.95** | 0.80 | **0.95** |
 | bge-reranker-v2-m3 | **1.00** | **0.95** | 0.50 | 0.40 |
 
 ### 1.4 Accuracy 판정
 
 | Model | FP8 | NVFP4 |
 |-------|-----|-------|
-| VL-Reranker-2B | N/A (vLLM bug) | N/A (vLLM bug) |
-| VL-Reranker-8B | N/A (vLLM bug) | N/A (vLLM bug) |
-| Reranker-0.6B | N/A (vLLM bug) | N/A (vLLM bug) |
-| Reranker-4B | N/A (vLLM bug) | N/A (vLLM bug) |
-| Reranker-8B | N/A (vLLM bug) | N/A (vLLM bug) |
+| VL-Reranker-2B | **PASS** (Spearman 0.994) | **PASS** (Spearman 0.950) |
+| VL-Reranker-8B | **PASS** (Spearman 0.993) | **PASS** (Spearman 0.962) |
+| Reranker-0.6B | **PASS** (Spearman 0.986) | **CAUTION** (Spearman 0.839, Top-20 60%) |
+| Reranker-4B | **PASS** (Spearman 0.993) | **CAUTION** (Spearman 0.925, Top-10 70%) |
+| Reranker-8B | **PASS** (Spearman 0.995) | **PASS** (Spearman 0.966) |
 | bge-reranker-v2-m3 | **PASS** (Spearman 0.998) | **FAIL** (Spearman 0.569, Top-10 50%) |
 
 ---
@@ -201,14 +191,13 @@ BF16 기준 상위 K개 문서와 양자화 모델의 상위 K개 문서의 일�
 
 ## 5. Key Findings
 
-### 5.1 vLLM 0.16.0 Qwen3 Reranker 양자화 비호환
+### 5.1 FP8: 전 모델 프로덕션 사용 가능
 
-- Qwen3 리랭커 5개 모델은 `from_2_way_softmax` weight loading 방식과 양자화 간 비호환으로 FP8/NVFP4 추론이 **불가능**
-- FP8: `tie_word_embeddings` + 양자화 → `lm_head` weight 미로드 → score = 0
-- NVFP4: `ReplicatedLinear.weight` 속성 미존재 → crash
-- vLLM upstream 수정이 필요하며, 현재 버전에서는 **BF16만 사용 가능**
+- **Spearman ≥ 0.986** (전 6모델), Top-10 Overlap ≥ 90%
+- 8B급 모델이 FP8에서 가장 높은 정합성: Reranker-8B (0.995), bge (0.998)
+- 0.6B 모델이 상대적으로 가장 낮지만 여전히 0.986으로 프로덕션 충분
 
-### 5.2 FP8 Latency (Qwen3 모델, 연산 성능 참고용)
+### 5.2 FP8 Latency
 
 - 8B 모델 (Reranker-8B, VL-Reranker-8B): **25~42% 레이턴시 감소** (batch=16 기준)
 - 4B 모델 (Reranker-4B): **30~35% 감소**
@@ -216,11 +205,12 @@ BF16 기준 상위 K개 문서와 양자화 모델의 상위 K개 문서의 일�
 - 2B 모델 (VL-Reranker-2B): **25~28% 감소**
 - **128 토큰 단일 배치**에서는 FP8이 오히려 느린 경우 있음 (커널 오버헤드 > 연산 절감)
 
-### 5.3 bge-reranker-v2-m3 (유일한 정상 양자화 모델)
+### 5.3 NVFP4: 모델별 품질 차이 큼
 
-- **FP8**: Spearman 0.998, Top-10 100%, Top-20 95% → **프로덕션 사용 가능**
-- **NVFP4**: Spearman 0.569, Top-10 50% → **프로덕션 사용 불가** (임베딩 벤치마크의 bge-m3 NVFP4 CosSim 0.54 붕괴와 동일 패턴)
-- FP8 레이턴시: 대입력(4096tok)에서 11~23% 감소, 소입력(128tok)에서는 오버헤드로 인한 성능 악화
+- **고품질 (Spearman ≥ 0.95)**: Reranker-8B (0.966), VL-Reranker-8B (0.962), VL-Reranker-2B (0.950)
+- **주의 필요 (0.85~0.95)**: Reranker-4B (0.925), Reranker-0.6B (0.839)
+- **사용 불가 (< 0.6)**: bge-reranker-v2-m3 (0.569)
+- **경향**: 모델이 클수록 NVFP4 정합성이 높음. 0.6B 소형 모델은 NVFP4에 민감
 
 ### 5.4 XLM-RoBERTa NVFP4 품질 붕괴
 
@@ -229,31 +219,43 @@ bge-reranker-v2-m3 (XLM-RoBERTa 기반)의 NVFP4 품질 열화는 임베딩 벤�
 - 리랭커 bge-reranker-v2-m3 NVFP4: Spearman 0.569, Top-10 50% → **FAIL**
 - 원인: XLM-RoBERTa 아키텍처가 W4A4 양자화에 민감 (RoBERTa self-attention의 precision 요구)
 
+### 5.5 vLLM 버그 패치 필요
+
+- vLLM 0.16.0 vanilla에서는 Qwen3 리랭커 FP8/NVFP4가 동작하지 않음
+- `adapters.py` score layer `quant_config=None` 패치 필요 (상세: Section 0)
+
 ---
 
 ## 6. Production Recommendations
 
-### 6.1 Qwen3 리랭커 (5개 모델)
+### 6.1 FP8 (전 모델 권장)
 
-| 권장사항 | 세부 |
-|----------|------|
-| **현재**: BF16만 사용 | FP8/NVFP4 비호환 (vLLM 0.16.0 버그) |
-| **향후**: vLLM 업데이트 대기 | `from_2_way_softmax` 양자화 호환 패치 후 재측정 |
-| **대안**: GGUF/GPTQ 등 다른 양자화 형식 검토 | vLLM 외 엔진도 고려 |
+| Model | Spearman | 판정 | 비고 |
+|-------|----------|------|------|
+| VL-Reranker-2B | 0.994 | **PASS** | Top-10 100% |
+| VL-Reranker-8B | 0.993 | **PASS** | batch=16 레이턴시 42% 감소 |
+| Reranker-0.6B | 0.986 | **PASS** | 소형 모델, 레이턴시 개선 13% |
+| Reranker-4B | 0.993 | **PASS** | 레이턴시 30~35% 감소 |
+| Reranker-8B | 0.995 | **PASS** | Top-10 100%, 레이턴시 36~40% 감소 |
+| bge-reranker-v2-m3 | 0.998 | **PASS** | 최고 정합성 |
 
-### 6.2 bge-reranker-v2-m3
+### 6.2 NVFP4 (모델별 판단 필요)
 
-| Precision | 권장 여부 | 근거 |
-|-----------|----------|------|
-| BF16 | **기본 권장** | 최고 정확도, 96GB GPU에서 충분 |
-| FP8 | **조건부 권장** | Spearman 0.998 → 랭킹 품질 유지, 대입력 레이턴시 11~23% 개선 |
-| NVFP4 | **비권장** | Spearman 0.569 → 랭킹 품질 심각 붕괴 |
+| Model | Spearman | 판정 | 비고 |
+|-------|----------|------|------|
+| VL-Reranker-2B | 0.950 | **PASS** | Top-10 90% |
+| VL-Reranker-8B | 0.962 | **PASS** | Top-10 90% |
+| Reranker-0.6B | 0.839 | **CAUTION** | Top-20 60%, 소형 모델 NVFP4에 민감 |
+| Reranker-4B | 0.925 | **CAUTION** | Top-10 70% |
+| Reranker-8B | 0.966 | **PASS** | Top-20 95% |
+| bge-reranker-v2-m3 | 0.569 | **FAIL** | XLM-RoBERTa NVFP4 품질 붕괴 |
 
 ### 6.3 종합
 
-- 리랭커 양자화는 임베딩보다 제약이 많음 (Qwen3 5개 모델 전부 비호환)
-- bge-reranker-v2-m3 FP8만이 유일하게 프로덕션 가능한 양자화 조합
-- 96GB GPU 환경에서는 BF16으로 8B 리랭커도 충분히 구동 가능 → 양자화 필요성 낮음
+- **FP8**: 전 6모델 프로덕션 사용 가능. Spearman ≥ 0.986, 8B급 모델에서 레이턴시 35~42% 감소
+- **NVFP4**: 8B급 Qwen3 모델에서 Spearman ≥ 0.95로 사용 가능. 소형 모델(0.6B, 4B)은 주의 필요. bge는 사용 불가
+- **BF16**: 96GB GPU 환경에서는 양자화 없이도 8B 모델 구동 가능. 정확도 우선 시 권장
+- **주의**: vLLM 0.16.0에는 `adapters.py` 패치 필요 (Section 0 참조)
 
 ---
 

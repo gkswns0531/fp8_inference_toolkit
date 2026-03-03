@@ -225,25 +225,19 @@ def main() -> None:
         print(f"  [FP8]  Done ({time.time() - t0:.1f}s)")
 
         # NVFP4 scores
-        # NOTE: Qwen3 reranker NVFP4 incompatible with vLLM 0.16.0
-        # (from_2_way_softmax weight loader fails on quantized ReplicatedLinear)
         fp4_metrics = None
-        if hf_overrides is None:
-            # Only bge-reranker-v2-m3 works with NVFP4 (native SequenceClassification)
-            print(f"  [FP4]  Scoring...")
-            t0 = time.time()
-            try:
-                fp4_scores = score_pairs(
-                    model_cfg["nvfp4_path"], queries, documents,
-                    hf_overrides=hf_overrides, quantization="compressed-tensors",
-                )
-                print(f"  [FP4]  Done ({time.time() - t0:.1f}s)")
-                fp4_metrics = compute_metrics(bf16_scores, fp4_scores)
-                del fp4_scores
-            except Exception as e:
-                print(f"  [FP4]  FAILED: {e}")
-        else:
-            print(f"  [FP4]  SKIP (Qwen3 reranker NVFP4 incompatible with vLLM 0.16.0)")
+        print(f"  [FP4]  Scoring...")
+        t0 = time.time()
+        try:
+            fp4_scores = score_pairs(
+                model_cfg["nvfp4_path"], queries, documents,
+                hf_overrides=hf_overrides, quantization="compressed-tensors",
+            )
+            print(f"  [FP4]  Done ({time.time() - t0:.1f}s)")
+            fp4_metrics = compute_metrics(bf16_scores, fp4_scores)
+            del fp4_scores
+        except Exception as e:
+            print(f"  [FP4]  FAILED: {e}")
 
         # Compute metrics
         fp8_metrics = compute_metrics(bf16_scores, fp8_scores)

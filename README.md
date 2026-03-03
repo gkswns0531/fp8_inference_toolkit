@@ -23,10 +23,9 @@ LLM/VLM 모델의 양자화(FP8, INT4 GPTQ/AWQ, NVFP4), 벤치마크, Hugging Fa
 - FP8: 전 모델 CosSim ≥ 0.999, 레이턴시 최대 37% 감소 → **프로덕션 권장**
 - NVFP4: Qwen3 계열 CosSim ≥ 0.998, bge-m3 CosSim 0.54 → **Qwen3만 사용 가능**
 
-**Reranker Models (6개)**:
-- Qwen3 리랭커 5개: vLLM 0.16.0 FP8/NVFP4 비호환 (BF16만 사용 가능)
-- bge-reranker-v2-m3 FP8: Spearman 0.998, Top-10 100% → **프로덕션 사용 가능**
-- bge-reranker-v2-m3 NVFP4: Spearman 0.569 → **사용 불가**
+**Reranker Models (6개)** *(vLLM 패치 적용 후)*:
+- FP8: 전 모델 Spearman ≥ 0.986 → **프로덕션 권장**
+- NVFP4: 8B급 모델 Spearman ≥ 0.95 → 사용 가능, 소형 모델(0.6B/4B) 주의 필요, bge NVFP4 사용 불가
 
 ---
 

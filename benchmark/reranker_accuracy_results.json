@@ -1,47 +1,117 @@
 {
-  "timestamp": "2026-03-03 06:42:03",
+  "timestamp": "2026-03-03 08:10:50",
   "results": [
     {
       "model": "Qwen/Qwen3-VL-Reranker-2B",
       "short": "VL-Reranker-2B",
       "num_pairs": 100,
-      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
-      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+      "fp8": {
+        "score_mae": 0.0198,
+        "score_max_diff": 0.132811,
+        "spearman_corr": 0.994455,
+        "spearman_p": 0.0,
+        "top10_overlap": 1.0,
+        "top20_overlap": 0.95
+      },
+      "nvfp4": {
+        "score_mae": 0.0559,
+        "score_max_diff": 0.331587,
+        "spearman_corr": 0.949763,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.9,
+        "top20_overlap": 0.9
+      }
     },
     {
       "model": "Qwen/Qwen3-VL-Reranker-8B",
       "short": "VL-Reranker-8B",
       "num_pairs": 100,
-      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
-      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+      "fp8": {
+        "score_mae": 0.021694,
+        "score_max_diff": 0.155255,
+        "spearman_corr": 0.993135,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.9,
+        "top20_overlap": 0.9
+      },
+      "nvfp4": {
+        "score_mae": 0.047264,
+        "score_max_diff": 0.37441,
+        "spearman_corr": 0.962184,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.9,
+        "top20_overlap": 0.85
+      }
     },
     {
       "model": "Qwen/Qwen3-Reranker-0.6B",
       "short": "Reranker-0.6B",
       "num_pairs": 100,
-      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
-      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+      "fp8": {
+        "score_mae": 0.025739,
+        "score_max_diff": 0.154471,
+        "spearman_corr": 0.985983,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.9,
+        "top20_overlap": 0.9
+      },
+      "nvfp4": {
+        "score_mae": 0.135583,
+        "score_max_diff": 0.550437,
+        "spearman_corr": 0.838968,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.8,
+        "top20_overlap": 0.6
+      }
     },
     {
       "model": "Qwen/Qwen3-Reranker-4B",
       "short": "Reranker-4B",
       "num_pairs": 100,
-      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
-      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+      "fp8": {
+        "score_mae": 0.022516,
+        "score_max_diff": 0.178986,
+        "spearman_corr": 0.992547,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.9,
+        "top20_overlap": 0.9
+      },
+      "nvfp4": {
+        "score_mae": 0.069312,
+        "score_max_diff": 0.469278,
+        "spearman_corr": 0.924548,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.7,
+        "top20_overlap": 0.9
+      }
     },
     {
       "model": "Qwen/Qwen3-Reranker-8B",
       "short": "Reranker-8B",
       "num_pairs": 100,
-      "fp8": "incompatible (vLLM 0.16.0: tie_word_embeddings + from_2_way_softmax \u2192 lm_head not loaded \u2192 scores=0)",
-      "nvfp4": "incompatible (vLLM 0.16.0: ReplicatedLinear has no .weight attribute in from_2_way_softmax)"
+      "fp8": {
+        "score_mae": 0.018897,
+        "score_max_diff": 0.108588,
+        "spearman_corr": 0.994839,
+        "spearman_p": 0.0,
+        "top10_overlap": 1.0,
+        "top20_overlap": 0.95
+      },
+      "nvfp4": {
+        "score_mae": 0.044691,
+        "score_max_diff": 0.227421,
+        "spearman_corr": 0.966457,
+        "spearman_p": 0.0,
+        "top10_overlap": 0.8,
+        "top20_overlap": 0.95
+      }
     },
     {
       "model": "BAAI/bge-reranker-v2-m3",
       "short": "bge-reranker-v2-m3",
       "num_pairs": 100,
       "fp8": {
-        "score_mae": 0.003613,
+        "score_mae": 0.003616,
         "score_max_diff": 0.067467,
         "spearman_corr": 0.998188,
         "spearman_p": 0.0,
@@ -49,7 +119,7 @@
         "top20_overlap": 0.95
       },
       "nvfp4": {
-        "score_mae": 0.062492,
+        "score_mae": 0.062495,
         "score_max_diff": 0.947552,
         "spearman_corr": 0.569253,
         "spearman_p": 0.0,
