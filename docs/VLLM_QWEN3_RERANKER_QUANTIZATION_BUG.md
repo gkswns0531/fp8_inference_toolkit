@@ -3,7 +3,7 @@
 **Date**: 2025-06-25
 **vLLM Version**: v0.16.1rc0 (commit 8fa68a8ce)
 **Affected Models**: All Qwen3 Reranker / VL-Reranker models (FP8 & NVFP4)
-**Status**: Open — no upstream fix as of vLLM 0.16.x
+**Status**: Fixed — PR [vllm-project/vllm#35849](https://github.com/vllm-project/vllm/pull/35849)
 
 ## Executive Summary
 
