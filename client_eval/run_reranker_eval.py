@@ -84,6 +84,9 @@ QWEN3_VL_RERANKER_OVERRIDES: dict[str, Any] = {
     "is_original_qwen3_reranker": True,
 }
 
+# Jinja chat template for Qwen3-VL reranker scoring (required for proper prompt formatting)
+QWEN3_VL_RERANKER_TEMPLATE = Path("/root/vllm/examples/pooling/score/template/qwen3_vl_reranker.jinja").read_text()
+
 
 # ---------------------------------------------------------------------------
 # Text truncation
@@ -192,7 +195,7 @@ def rerank_candidates(
             docs_flat.append(doc)
         boundaries.append(len(queries_flat))
 
-    outputs = reranker.score(queries_flat, docs_flat)
+    outputs = reranker.score(queries_flat, docs_flat, chat_template=QWEN3_VL_RERANKER_TEMPLATE)
     scores = [o.outputs.score for o in outputs]
 
     reranked: list[list[str]] = []
